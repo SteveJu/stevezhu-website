@@ -4,7 +4,7 @@ const Experience = () => {
       logo: "/logos/meta-logo.avif",
       title: "Software Engineer",
       company: "Meta Platforms",
-      team: "Integrity & Youth Protection (Instagram) | Horizon Creator Platform & Monetization",
+      team: "",
       period: "Mar 2025 - Present",
       location: "New York, NY",
       highlights: [
@@ -91,7 +91,7 @@ const Experience = () => {
                 <div className="flex-1">
                   <div className="text-blue-600 font-bold text-xl">• {exp.title}</div>
                   <div className="text-gray-800 font-semibold text-lg">
-                    {exp.company} {exp.team && `• ${exp.team}`}
+                    {exp.company}{exp.team && ` • ${exp.team}`}
                   </div>
                   <div className="text-gray-600 mb-4">{exp.period} • {exp.location}</div>
                   
