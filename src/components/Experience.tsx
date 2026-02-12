@@ -1,7 +1,7 @@
 const Experience = () => {
   const experiences = [
     {
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Meta_Platforms_Inc._logo.svg/2560px-Meta_Platforms_Inc._logo.svg.png",
+      logo: "/logos/meta-logo.avif",
       title: "Software Engineer",
       company: "Meta Platforms",
       team: "Integrity & Youth Protection (Instagram) | Horizon Creator Platform & Monetization",
@@ -18,7 +18,7 @@ const Experience = () => {
       tech: ["Python", "Llama", "Gemini", "GraphQL", "React", "PHP (Hack)", "AI/ML Pipelines"]
     },
     {
-      logo: "https://logos-world.net/wp-content/uploads/2021/02/Bank-of-America-Logo.png",
+      logo: "/logos/bank-of-america-logo.png",
       title: "Software Engineer", 
       company: "Bank of America",
       period: "Jul 2021 - Mar 2025",
@@ -32,7 +32,7 @@ const Experience = () => {
       tech: ["Java", "Spring Boot", "MySQL", "JavaScript", "Python", "Maven", "JBoss"]
     },
     {
-      logo: "https://upload.wikimedia.org/wikipedia/en/thumb/e/e1/Ohio_State_Buckeyes_logo.svg/1200px-Ohio_State_Buckeyes_logo.svg.png", 
+      logo: "/logos/osu-logo.png", 
       title: "Research Assistant",
       company: "The Ohio State University",
       period: "Jan 2020 - May 2021",
@@ -48,7 +48,7 @@ const Experience = () => {
 
   const education = [
     {
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Columbia_University_Logo.png/1200px-Columbia_University_Logo.png",
+      logo: "/logos/columbia-logo.png",
       school: "Columbia University",
       degree: "Master of Science in Computer Science",
       track: "Machine Learning Track",
@@ -56,7 +56,7 @@ const Experience = () => {
       location: "New York, NY"
     },
     {
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Stanford_University_seal_2003.svg/1200px-Stanford_University_seal_2003.svg.png",
+      logo: "/logos/stanford-logo.png",
       school: "Stanford University",
       degree: "Artificial Intelligence Graduate Program",
       track: "Non-degree Option",
@@ -64,7 +64,7 @@ const Experience = () => {
       location: "Stanford, CA"
     },
     {
-      logo: "https://upload.wikimedia.org/wikipedia/en/thumb/e/e1/Ohio_State_Buckeyes_logo.svg/1200px-Ohio_State_Buckeyes_logo.svg.png",
+      logo: "/logos/osu-logo.png",
       school: "The Ohio State University", 
       degree: "Bachelor of Science in Computer Science and Engineering",
       track: "Artificial Intelligence",
