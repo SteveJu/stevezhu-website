@@ -1,7 +1,7 @@
 const Experience = () => {
   const experiences = [
     {
-      logo: "/logos/meta-logo.avif",
+      logo: "/logos/meta-logo-transparent.png",
       title: "Software Engineer",
       company: "Meta Platforms",
       team: "",
@@ -18,7 +18,7 @@ const Experience = () => {
       tech: ["Python", "Llama", "Gemini", "GraphQL", "React", "PHP (Hack)", "AI/ML Pipelines"]
     },
     {
-      logo: "/logos/bank-of-america-logo.png",
+      logo: "/logos/boa-logo-transparent.png",
       title: "Software Engineer", 
       company: "Bank of America",
       period: "Jul 2021 - Mar 2025",
@@ -32,7 +32,7 @@ const Experience = () => {
       tech: ["Java", "Spring Boot", "MySQL", "JavaScript", "Python", "Maven", "JBoss"]
     },
     {
-      logo: "/logos/osu-logo.png", 
+      logo: "/logos/osu-transparent.png", 
       title: "Research Assistant",
       company: "The Ohio State University",
       period: "Jan 2020 - May 2021",
@@ -48,7 +48,7 @@ const Experience = () => {
 
   const education = [
     {
-      logo: "/logos/columbia-logo.png",
+      logo: "/logos/columbia-transparent.png",
       school: "Columbia University",
       degree: "Master of Science in Computer Science",
       track: "Machine Learning Track",
@@ -56,7 +56,7 @@ const Experience = () => {
       location: "New York, NY"
     },
     {
-      logo: "/logos/stanford-logo.png",
+      logo: "/logos/stanford-transparent.png",
       school: "Stanford University",
       degree: "Artificial Intelligence Graduate Program",
       track: "Non-degree Option",
@@ -64,7 +64,7 @@ const Experience = () => {
       location: "Stanford, CA"
     },
     {
-      logo: "/logos/osu-logo.png",
+      logo: "/logos/osu-transparent.png",
       school: "The Ohio State University", 
       degree: "Bachelor of Science in Computer Science and Engineering",
       track: "Artificial Intelligence",
