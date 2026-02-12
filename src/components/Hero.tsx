@@ -1,9 +1,12 @@
 'use client';
 
+import Particles from '@/components/effects/Particles';
+
 const Hero = () => {
   return (
-    <section data-section="0" className="min-h-screen flex items-center justify-center bg-white dark:bg-black text-gray-900 dark:text-white snap-start">
-      <div className="text-center space-y-8">
+    <section data-section="0" className="relative min-h-screen flex items-center justify-center bg-white dark:bg-black text-gray-900 dark:text-white snap-start overflow-hidden">
+      <Particles />
+      <div className="relative z-10 text-center space-y-8">
         <h1 className="text-6xl md:text-8xl font-light tracking-tight">
           Steve Zhu
         </h1>
