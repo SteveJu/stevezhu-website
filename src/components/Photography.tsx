@@ -1,7 +1,10 @@
+import Link from 'next/link';
+
 const Photography = () => {
   const albums = [
     {
       id: 1,
+      slug: "nyc-friends",
       title: "NYC Friends",
       subtitle: "Portrait Collection",
       count: "24 photos",
@@ -9,6 +12,7 @@ const Photography = () => {
     },
     {
       id: 2,
+      slug: "central-park",
       title: "Central Park",
       subtitle: "Autumn Session",
       count: "18 photos", 
@@ -16,6 +20,7 @@ const Photography = () => {
     },
     {
       id: 3,
+      slug: "jersey-city",
       title: "Jersey City",
       subtitle: "Sunset Vibes", 
       count: "31 photos",
@@ -23,6 +28,7 @@ const Photography = () => {
     },
     {
       id: 4,
+      slug: "brooklyn-streets",
       title: "Brooklyn Streets",
       subtitle: "Urban Stories",
       count: "27 photos",
@@ -30,6 +36,7 @@ const Photography = () => {
     },
     {
       id: 5,
+      slug: "manhattan-nights",
       title: "Manhattan Nights",
       subtitle: "City Lights",
       count: "22 photos", 
@@ -37,6 +44,7 @@ const Photography = () => {
     },
     {
       id: 6,
+      slug: "weekend-hangouts",
       title: "Weekend Hangouts",
       subtitle: "Candid Moments",
       count: "35 photos",
@@ -60,10 +68,9 @@ const Photography = () => {
         {/* Photo Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {albums.map((album) => (
-            <div
-              key={album.id}
-              className="group relative aspect-[4/3] overflow-hidden rounded-lg cursor-pointer transform transition-all duration-500 hover:scale-105"
-            >
+            <Link key={album.id} href={`/photography/${album.slug}`}>
+              <div className="group relative aspect-[4/3] overflow-hidden rounded-lg cursor-pointer transform transition-all duration-500 hover:scale-105"
+              >
               {/* Background Image */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
@@ -88,7 +95,8 @@ const Photography = () => {
 
               {/* Hover Effect */}
               <div className="absolute inset-0 border-2 border-white/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
+              </div>
+            </Link>
           ))}
         </div>
 
