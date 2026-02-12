@@ -1,11 +1,13 @@
 'use client';
 
 import { useTheme } from '@/contexts/ThemeContext';
+import { useScrollSpy } from '@/hooks/useScrollSpy';
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
+  const activeSection = useScrollSpy(['1', '2', '3', '4']);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +43,11 @@ const Navbar = () => {
                   section.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
               }}
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200"
+              className={`transition-colors duration-200 ${
+                activeSection === item.section.toString() 
+                  ? 'text-blue-600 dark:text-blue-400 font-medium' 
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+              }`}
             >
               {item.name}
             </button>
