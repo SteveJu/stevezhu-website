@@ -43,10 +43,12 @@ const Contact = () => {
             <div className="text-2xl mb-4">🚀</div>
             <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">GitHub</h3>
             <a 
-              href="#"
+              href="https://github.com/SteveJu"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
             >
-              stevezhu
+              SteveJu
             </a>
           </div>
         </div>

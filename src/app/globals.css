@@ -30,6 +30,17 @@
   --foreground: #ededed;
 }
 
+/* Force theme colors */
+html[data-theme="light"] {
+  background: #ffffff;
+  color: #171717;
+}
+
+html[data-theme="dark"] {
+  background: #0a0a0a;
+  color: #ededed;
+}
+
 /* Smooth scrolling & Snap */
 html {
   scroll-behavior: smooth;
