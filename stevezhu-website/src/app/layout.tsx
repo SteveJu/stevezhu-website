@@ -25,12 +25,13 @@ export const metadata: Metadata = {
       "Software Engineer at Meta. Building intelligent systems at the intersection of AI and engineering.",
     type: "website",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
