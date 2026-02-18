@@ -30,13 +30,13 @@ export default function Experience() {
 
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-violet-500/50 via-cyan-500/30 to-transparent" />
+            <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-violet-500/50 via-cyan-500/30 to-transparent hidden md:block" />
 
             {experience.map((exp, i) => (
               <motion.div
                 key={i}
                 variants={fadeInUp}
-                className={`relative mb-16 last:mb-0 md:w-1/2 ${
+                className={`relative mb-16 last:mb-0 w-full md:w-1/2 ${
                   i % 2 === 0 ? "md:pr-16" : "md:pl-16 md:ml-auto"
                 }`}
               >

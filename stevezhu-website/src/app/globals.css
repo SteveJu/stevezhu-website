@@ -27,6 +27,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 /* Custom scrollbar */
@@ -51,4 +54,22 @@ body {
 ::selection {
   background-color: rgba(139, 92, 246, 0.3);
   color: white;
+}
+
+/* Debug: highlight overflow elements */
+.debug-overflow * {
+  outline: 1px solid red !important;
+}
+
+/* Fix for mobile overflow */
+html, body {
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+}
+
+/* Ensure all containers don't exceed viewport */
+.container-fix {
+  max-width: 100%;
+  overflow: hidden;
 }
