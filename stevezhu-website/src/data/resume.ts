@@ -6,7 +6,7 @@ export const personalInfo = {
   location: "New York City",
   links: {
     github: "https://github.com/stevezhu",
-    linkedin: "https://linkedin.com/in/stevezhu",
+    linkedin: "https://www.linkedin.com/in/zhengqi-zhu-967714139",
   },
 };
 
