@@ -15,44 +15,25 @@ type TravelRecord = {
 type TravelModule = {
   id: string;
   label: string;
+  icon: 'flight' | 'car' | 'hotel' | 'restaurant' | 'activity';
   description: string;
   fields: Array<{
     label: string;
     placeholder: string;
     type?: 'text' | 'date' | 'number' | 'textarea';
+    isCost?: boolean;
   }>;
 };
 
 type TravelFormValues = Record<string, Record<string, Record<string, string>>>;
 
-const initialTravels: TravelRecord[] = [
-  {
-    id: 'tokyo-2026',
-    title: '东京春季旅行',
-    dates: '2026.04.03 - 2026.04.12',
-    status: '规划中',
-    summary: '机票待确认，酒店优先看银座/涩谷，想安排两天自由拍照。',
-  },
-  {
-    id: 'iceland-2025',
-    title: '冰岛自驾',
-    dates: '2025.11.18 - 2025.11.27',
-    status: '草稿',
-    summary: '需要补充租车保险、极光地点、每日路程时间。',
-  },
-  {
-    id: 'paris-2024',
-    title: '巴黎短途',
-    dates: '2024.09.05 - 2024.09.10',
-    status: '已归档',
-    summary: '保留餐厅和照片点记录，未来可以复用。',
-  },
-];
+const initialTravels: TravelRecord[] = [];
 
 const travelModules: TravelModule[] = [
   {
     id: 'flight',
     label: '机票',
+    icon: 'flight',
     description: '记录航班、时间、机场、确认号和行李信息。',
     fields: [
       { label: '航空公司', placeholder: '例如 Delta / ANA / United' },
@@ -60,12 +41,28 @@ const travelModules: TravelModule[] = [
       { label: '出发时间', placeholder: '选择或填写出发时间' },
       { label: '到达时间', placeholder: '选择或填写到达时间' },
       { label: '确认号', placeholder: 'Booking reference' },
+      { label: '费用', placeholder: '机票总价', type: 'number', isCost: true },
       { label: '备注', placeholder: '行李、座位、转机注意事项', type: 'textarea' },
+    ],
+  },
+  {
+    id: 'car',
+    label: '租车',
+    icon: 'car',
+    description: '整理取车还车、保险、驾照和停车信息。',
+    fields: [
+      { label: '租车公司', placeholder: 'Hertz / Avis / Toyota Rent a Car' },
+      { label: '取车地点', placeholder: '机场 / 门店地址' },
+      { label: '还车地点', placeholder: '同地点或异地还车' },
+      { label: '车型', placeholder: 'SUV / Compact / EV' },
+      { label: '费用', placeholder: '租车预计费用', type: 'number', isCost: true },
+      { label: '备注', placeholder: '保险、ETC、国际驾照、停车规则', type: 'textarea' },
     ],
   },
   {
     id: 'hotel',
     label: '酒店',
+    icon: 'hotel',
     description: '保存住宿名称、地址、入住退房和预订信息。',
     fields: [
       { label: '酒店名称', placeholder: '酒店 / Airbnb / 民宿名称' },
@@ -73,57 +70,36 @@ const travelModules: TravelModule[] = [
       { label: '入住日期', placeholder: 'Check-in', type: 'date' },
       { label: '退房日期', placeholder: 'Check-out', type: 'date' },
       { label: '预订平台', placeholder: 'Booking / Amex Travel / Airbnb' },
+      { label: '费用', placeholder: '住宿总价', type: 'number', isCost: true },
       { label: '备注', placeholder: '早餐、停车、寄存行李、会员权益', type: 'textarea' },
     ],
   },
   {
-    id: 'place',
-    label: '地点',
-    description: '收藏景点、餐厅、拍照点和想去的区域。',
+    id: 'restaurant',
+    label: '餐厅',
+    icon: 'restaurant',
+    description: '记录餐厅、预约、想点的菜和预计花费。',
     fields: [
-      { label: '地点名称', placeholder: '例如 明治神宫 / teamLab / 某家餐厅' },
-      { label: '类别', placeholder: '景点 / 餐厅 / 咖啡 / 拍照点' },
-      { label: '城市区域', placeholder: '例如 Shibuya / Ginza' },
-      { label: '优先级', placeholder: '必去 / 想去 / 有空再去' },
-      { label: '链接', placeholder: 'Google Maps / 官网 / 小红书链接' },
-      { label: '备注', placeholder: '营业时间、预约要求、拍照灵感', type: 'textarea' },
+      { label: '餐厅名称', placeholder: '餐厅 / 咖啡店 / 酒吧名称' },
+      { label: '日期时间', placeholder: '预约或计划时间' },
+      { label: '地址', placeholder: '地址或区域' },
+      { label: '预约信息', placeholder: '预约号 / 人数 / 平台' },
+      { label: '费用', placeholder: '预计人均或总价', type: 'number', isCost: true },
+      { label: '备注', placeholder: '想点的菜、营业时间、dress code', type: 'textarea' },
     ],
   },
   {
-    id: 'car',
-    label: '租车',
-    description: '整理取车还车、保险、驾照和停车信息。',
+    id: 'activity',
+    label: '活动',
+    icon: 'activity',
+    description: '安排景点、体验、演出、拍照点和每日活动。',
     fields: [
-      { label: '租车公司', placeholder: 'Hertz / Avis / Toyota Rent a Car' },
-      { label: '取车地点', placeholder: '机场 / 门店地址' },
-      { label: '还车地点', placeholder: '同地点或异地还车' },
-      { label: '车型', placeholder: 'SUV / Compact / EV' },
-      { label: '预计费用', placeholder: '金额', type: 'number' },
-      { label: '备注', placeholder: '保险、ETC、国际驾照、停车规则', type: 'textarea' },
-    ],
-  },
-  {
-    id: 'schedule',
-    label: '每日行程',
-    description: '把一天拆成上午、下午、晚上，先粗排节奏。',
-    fields: [
+      { label: '活动名称', placeholder: '景点 / 演出 / 展览 / 拍照点' },
       { label: '日期', placeholder: '选择日期', type: 'date' },
-      { label: '上午', placeholder: '上午安排', type: 'textarea' },
-      { label: '下午', placeholder: '下午安排', type: 'textarea' },
-      { label: '晚上', placeholder: '晚上安排', type: 'textarea' },
-      { label: '当天重点', placeholder: '这一天最重要的一件事' },
-    ],
-  },
-  {
-    id: 'budget',
-    label: '预算',
-    description: '按类别记录预算和实际花费，之后可以做统计。',
-    fields: [
-      { label: '类别', placeholder: '机票 / 酒店 / 吃饭 / 交通 / 购物' },
-      { label: '预计金额', placeholder: '预算', type: 'number' },
-      { label: '实际金额', placeholder: '实际花费', type: 'number' },
-      { label: '币种', placeholder: 'USD / JPY / EUR' },
-      { label: '备注', placeholder: '付款方式、是否报销、退款状态', type: 'textarea' },
+      { label: '时间段', placeholder: '上午 / 下午 / 晚上 / 具体时间' },
+      { label: '地点', placeholder: '地址或区域' },
+      { label: '费用', placeholder: '门票或预计花费', type: 'number', isCost: true },
+      { label: '备注', placeholder: '预约要求、链接、路线、拍照灵感', type: 'textarea' },
     ],
   },
 ];
@@ -133,8 +109,70 @@ const createNewTravel = (index: number): TravelRecord => ({
   title: '新的旅行计划',
   dates: '待定',
   status: '新建',
-  summary: '从左侧选择机票、酒店、地点、租车等模块，逐项补充信息。',
+  summary: '从左侧选择机票、租车、酒店、餐厅、活动，逐项补充信息。',
 });
+
+const ModuleIcon = ({ icon }: { icon: TravelModule['icon'] }) => {
+  const commonProps = {
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    strokeWidth: 1.8,
+    viewBox: '0 0 24 24',
+  };
+
+  if (icon === 'flight') {
+    return (
+      <svg {...commonProps}>
+        <path d="M3 11.5 21 4l-7.5 18-2.5-7-8-3.5Z" />
+        <path d="m11 14 4-4" />
+      </svg>
+    );
+  }
+
+  if (icon === 'car') {
+    return (
+      <svg {...commonProps}>
+        <path d="M5 13h14l-1.5-4.5h-11L5 13Z" />
+        <path d="M4 13v4h16v-4" />
+        <path d="M7 17h.1" />
+        <path d="M17 17h.1" />
+      </svg>
+    );
+  }
+
+  if (icon === 'hotel') {
+    return (
+      <svg {...commonProps}>
+        <path d="M5 21V4h10v17" />
+        <path d="M15 9h4v12" />
+        <path d="M8 8h2" />
+        <path d="M8 12h2" />
+        <path d="M8 16h2" />
+      </svg>
+    );
+  }
+
+  if (icon === 'restaurant') {
+    return (
+      <svg {...commonProps}>
+        <path d="M7 3v8" />
+        <path d="M4.5 3v4.5a2.5 2.5 0 0 0 5 0V3" />
+        <path d="M7 11v10" />
+        <path d="M17 3v18" />
+        <path d="M17 3c2 1.5 3 3.5 3 6 0 2-1 3-3 3" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...commonProps}>
+      <path d="M12 3l2.2 5.2L20 10.5l-5.2 2.2L12 19l-2.8-6.3L4 10.5l5.8-2.3L12 3Z" />
+      <path d="M19 16l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Z" />
+    </svg>
+  );
+};
 
 const TravelPlannerWorkspace = () => {
   const [view, setView] = useState<PlannerView>('list');
@@ -150,6 +188,30 @@ const TravelPlannerWorkspace = () => {
   const activeModule = useMemo(() => {
     return travelModules.find((module) => module.id === activeModuleId) ?? travelModules[0];
   }, [activeModuleId]);
+
+  const activeBudget = useMemo(() => {
+    if (!activeTravel) return 0;
+
+    const travelValues = formValues[activeTravel.id] ?? {};
+
+    return travelModules.reduce((total, module) => {
+      const moduleValues = travelValues[module.id] ?? {};
+      const moduleTotal = module.fields.reduce((fieldTotal, field) => {
+        if (!field.isCost) return fieldTotal;
+
+        const numericValue = Number.parseFloat((moduleValues[field.label] ?? '').replaceAll(',', ''));
+        return Number.isFinite(numericValue) ? fieldTotal + numericValue : fieldTotal;
+      }, 0);
+
+      return total + moduleTotal;
+    }, 0);
+  }, [activeTravel, formValues]);
+
+  const formattedBudget = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(activeBudget);
 
   const openEditor = (travelId: string) => {
     setActiveTravelId(travelId);
@@ -194,9 +256,15 @@ const TravelPlannerWorkspace = () => {
               {activeTravel?.summary}
             </p>
           </div>
-          <button type="button" className="theme-button" onClick={() => setView('list')}>
-            返回列表
-          </button>
+          <div className="travel-editor-actions">
+            <div className="travel-budget-total" aria-label="实时预算总计">
+              <span>实时预算</span>
+              <strong>{formattedBudget}</strong>
+            </div>
+            <button type="button" className="theme-button" onClick={() => setView('list')}>
+              返回列表
+            </button>
+          </div>
         </div>
 
         <div className="travel-editor-grid">
@@ -209,7 +277,12 @@ const TravelPlannerWorkspace = () => {
                 className={activeModule.id === module.id ? 'is-active' : ''}
                 onClick={() => setActiveModuleId(module.id)}
               >
-                <span>{module.label}</span>
+                <span>
+                  <span className="travel-module-icon" aria-hidden="true">
+                    <ModuleIcon icon={module.icon} />
+                  </span>
+                  {module.label}
+                </span>
                 <small>{module.description}</small>
               </button>
             ))}
@@ -276,21 +349,29 @@ const TravelPlannerWorkspace = () => {
       </div>
 
       <div className="travel-history-list">
-        {travels.map((travel) => (
-          <button
-            key={travel.id}
-            type="button"
-            className="theme-card travel-history-card"
-            onClick={() => openEditor(travel.id)}
-          >
-            <div>
-              <span>{travel.status}</span>
-              <h2>{travel.title}</h2>
-              <p>{travel.summary}</p>
-            </div>
-            <strong>{travel.dates}</strong>
-          </button>
-        ))}
+        {travels.length === 0 ? (
+          <div className="theme-card travel-empty-state">
+            <span>暂无旅行记录</span>
+            <h2>创建你的第一条旅行计划</h2>
+            <p>点击右上角加号，新建后就可以填写机票、租车、酒店、餐厅和活动信息。</p>
+          </div>
+        ) : (
+          travels.map((travel) => (
+            <button
+              key={travel.id}
+              type="button"
+              className="theme-card travel-history-card"
+              onClick={() => openEditor(travel.id)}
+            >
+              <div>
+                <span>{travel.status}</span>
+                <h2>{travel.title}</h2>
+                <p>{travel.summary}</p>
+              </div>
+              <strong>{travel.dates}</strong>
+            </button>
+          ))
+        )}
       </div>
     </div>
   );

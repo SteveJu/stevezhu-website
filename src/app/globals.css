@@ -673,6 +673,66 @@ body {
   white-space: nowrap;
 }
 
+.travel-empty-state {
+  padding: clamp(1.5rem, 4vw, 2rem);
+}
+
+.travel-empty-state span {
+  color: var(--mode-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.travel-empty-state h2 {
+  margin-top: 0.7rem;
+  color: var(--mode-ink);
+  font-family: var(--mode-font-display);
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  line-height: 1.05;
+}
+
+.travel-empty-state p {
+  margin-top: 0.85rem;
+  color: var(--mode-muted);
+  line-height: 1.7;
+}
+
+.travel-editor-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.travel-budget-total {
+  min-width: 9rem;
+  border: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  color: var(--mode-ink);
+  padding: 0.7rem 0.85rem;
+  text-align: right;
+  box-shadow: var(--mode-shadow);
+}
+
+.travel-budget-total span {
+  display: block;
+  color: var(--mode-muted);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.travel-budget-total strong {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--mode-accent);
+  font-family: var(--mode-font-display);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
 .travel-editor-grid {
   display: grid;
   grid-template-columns: minmax(14rem, 0.38fr) minmax(0, 1fr);
@@ -709,8 +769,26 @@ body {
   transform: translateX(3px);
 }
 
-.travel-module-menu button span {
+.travel-module-menu button > span {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-weight: 900;
+}
+
+.travel-module-icon {
+  display: inline-grid;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--mode-line);
+  color: var(--mode-accent);
+}
+
+.travel-module-icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
 .travel-module-menu button small {
@@ -802,6 +880,8 @@ body {
 }
 
 .site-frame[data-site-mode="cyber"] .travel-add-button,
+.site-frame[data-site-mode="cyber"] .travel-budget-total,
+.site-frame[data-site-mode="cyber"] .travel-module-icon,
 .site-frame[data-site-mode="cyber"] .travel-module-menu button,
 .site-frame[data-site-mode="cyber"] .travel-entry-heading > span,
 .site-frame[data-site-mode="cyber"] .travel-secondary-button,
@@ -811,6 +891,8 @@ body {
 }
 
 .site-frame[data-site-mode="sketch"] .travel-add-button,
+.site-frame[data-site-mode="sketch"] .travel-budget-total,
+.site-frame[data-site-mode="sketch"] .travel-module-icon,
 .site-frame[data-site-mode="sketch"] .travel-module-menu button,
 .site-frame[data-site-mode="sketch"] .travel-entry-heading > span,
 .site-frame[data-site-mode="sketch"] .travel-secondary-button,
@@ -824,6 +906,10 @@ body {
 .site-frame[data-site-mode="sketch"] .travel-add-button {
   border-radius: 999px 820px 900px 760px / 760px 920px 740px 880px;
   transform: rotate(1deg);
+}
+
+.site-frame[data-site-mode="sketch"] .travel-module-icon {
+  border-radius: 999px 820px 900px 760px / 760px 920px 740px 880px;
 }
 
 .site-frame[data-site-mode="sketch"] .theme-nav-link:hover,
