@@ -64,6 +64,8 @@ export async function POST(request: Request) {
     'Return ONLY valid JSON. Do not include markdown.',
     'Use these formats: dates as YYYY-MM-DD, times as HH:mm in 24-hour format, booleans as "true" or "false", prices as numeric strings without currency symbols.',
     'Only include fields that are clearly visible or strongly implied. Do not invent missing values.',
+    'Extract only information that belongs to this travel item type. Ignore unrelated hotels, flights, cars, restaurants, activities, ads, headers, and page navigation.',
+    'If a field is missing, uncertain, or belongs to another booking type, omit that field entirely.',
     'Use Chinese field keys exactly as listed.',
   ].join('\n');
 

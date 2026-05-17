@@ -850,6 +850,33 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
     });
   };
 
+  const getValidatedAiFields = (card: JellyCard, fields: Record<string, string>) => {
+    if (!activeTravel) return fields;
+
+    const dateFieldLabels = getModule(card.moduleId).fields
+      .filter((field) => field.type === 'date')
+      .map((field) => field.label);
+    const invalidDateLabels: string[] = [];
+    const validatedFields = Object.fromEntries(
+      Object.entries(fields).filter(([fieldLabel, fieldValue]) => {
+        if (!dateFieldLabels.includes(fieldLabel)) return true;
+
+        const isIsoDate = /^\d{4}-\d{2}-\d{2}$/.test(fieldValue);
+        const isInRange = fieldValue >= activeTravel.startDate && fieldValue <= activeTravel.endDate;
+        if (isIsoDate && isInRange) return true;
+
+        invalidDateLabels.push(fieldLabel);
+        return false;
+      }),
+    );
+
+    if (invalidDateLabels.length > 0) {
+      window.alert(`AI 识别到的 ${invalidDateLabels.join('、')} 不在当前行程日期范围内，已先不填这些日期。`);
+    }
+
+    return validatedFields;
+  };
+
   const fillJellyFromScreenshot = async (card: JellyCard, file: File) => {
     if (!activeTravel) return;
 
@@ -875,7 +902,13 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
       }
 
       const result = await response.json() as { fields?: Record<string, string> };
-      const fields = result.fields ?? {};
+      const fields = getValidatedAiFields(card, result.fields ?? {});
+
+      if (Object.keys(fields).length === 0) {
+        window.alert('AI 没有从这张截图里识别到对应果冻的明确信息。');
+        setAiFillStatus((currentStatus) => ({ ...currentStatus, [card.id]: 'idle' }));
+        return;
+      }
 
       setFormValues((currentValues) => ({
         ...currentValues,
