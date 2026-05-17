@@ -641,6 +641,11 @@ body {
   transform: translateY(-2px);
 }
 
+.travel-history-card > button {
+  min-width: 0;
+  text-align: left;
+}
+
 .travel-history-card span,
 .travel-panel-label {
   color: var(--mode-muted);
@@ -666,11 +671,41 @@ body {
 }
 
 .travel-history-card strong {
-  align-self: start;
   color: var(--mode-accent);
   font-size: 0.85rem;
   letter-spacing: 0.06em;
   white-space: nowrap;
+}
+
+.travel-history-actions {
+  display: grid;
+  justify-items: end;
+  gap: 0.7rem;
+}
+
+.travel-history-actions span {
+  color: var(--mode-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.travel-history-actions button {
+  border: 1px solid var(--mode-line);
+  background: transparent;
+  color: var(--mode-muted);
+  padding: 0.5rem 0.62rem;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-history-actions button:hover {
+  border-color: var(--mode-accent-2);
+  color: var(--mode-accent-2);
+  transform: translateY(-1px);
 }
 
 .travel-empty-state {
@@ -1264,6 +1299,23 @@ body {
   text-align: left;
 }
 
+.travel-home-link {
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
+  color: var(--mode-ink);
+  padding: 0.72rem 0.78rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: center;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-home-link:hover {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+  transform: translateY(-1px);
+}
+
 .travel-save-status {
   border: 1px solid var(--mode-line);
   background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
@@ -1289,6 +1341,7 @@ body {
 }
 
 .travel-companion-panel {
+  position: relative;
   display: grid;
   gap: 0.75rem;
   border: 1px solid var(--mode-line);
@@ -1368,9 +1421,71 @@ body {
   transform: translateY(-1px);
 }
 
+.travel-companion-history-trigger {
+  width: 100%;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface-strong) 82%, transparent);
+  color: var(--mode-ink);
+  padding: 0.62rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-companion-history-trigger:hover:not(:disabled) {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+  transform: translateY(-1px);
+}
+
+.travel-companion-history-trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.travel-companion-popover {
+  position: absolute;
+  left: 0.82rem;
+  right: 0.82rem;
+  top: calc(100% - 0.2rem);
+  z-index: 6;
+  display: grid;
+  gap: 0.75rem;
+  border: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  padding: 0.85rem;
+  box-shadow: var(--mode-shadow);
+}
+
+.travel-companion-popover-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.travel-companion-popover-head span {
+  color: var(--mode-muted);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.travel-companion-popover-head button {
+  border: 1px solid var(--mode-line);
+  background: transparent;
+  color: var(--mode-muted);
+  padding: 0.34rem 0.48rem;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .travel-companion-add {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.45rem;
 }
 
@@ -1475,12 +1590,17 @@ body {
 .site-frame[data-site-mode="cyber"] .travel-companion-add button,
 .site-frame[data-site-mode="cyber"] .travel-companion-add input,
 .site-frame[data-site-mode="cyber"] .travel-companion-chips button,
+.site-frame[data-site-mode="cyber"] .travel-companion-history-trigger,
 .site-frame[data-site-mode="cyber"] .travel-companion-panel,
+.site-frame[data-site-mode="cyber"] .travel-companion-popover,
+.site-frame[data-site-mode="cyber"] .travel-companion-popover-head button,
 .site-frame[data-site-mode="cyber"] .travel-known-companions button,
 .site-frame[data-site-mode="cyber"] .travel-create-form input,
 .site-frame[data-site-mode="cyber"] .travel-date-trigger,
 .site-frame[data-site-mode="cyber"] .travel-date-nav button,
 .site-frame[data-site-mode="cyber"] .travel-day-heading span,
+.site-frame[data-site-mode="cyber"] .travel-home-link,
+.site-frame[data-site-mode="cyber"] .travel-history-actions button,
 .site-frame[data-site-mode="cyber"] .travel-jelly-actions button,
 .site-frame[data-site-mode="cyber"] .travel-jelly-delete,
 .site-frame[data-site-mode="cyber"] .travel-jelly-summary div span,
@@ -1506,12 +1626,17 @@ body {
 .site-frame[data-site-mode="sketch"] .travel-companion-add button,
 .site-frame[data-site-mode="sketch"] .travel-companion-add input,
 .site-frame[data-site-mode="sketch"] .travel-companion-chips button,
+.site-frame[data-site-mode="sketch"] .travel-companion-history-trigger,
 .site-frame[data-site-mode="sketch"] .travel-companion-panel,
+.site-frame[data-site-mode="sketch"] .travel-companion-popover,
+.site-frame[data-site-mode="sketch"] .travel-companion-popover-head button,
 .site-frame[data-site-mode="sketch"] .travel-known-companions button,
 .site-frame[data-site-mode="sketch"] .travel-create-form input,
 .site-frame[data-site-mode="sketch"] .travel-date-trigger,
 .site-frame[data-site-mode="sketch"] .travel-date-nav button,
 .site-frame[data-site-mode="sketch"] .travel-day-heading span,
+.site-frame[data-site-mode="sketch"] .travel-home-link,
+.site-frame[data-site-mode="sketch"] .travel-history-actions button,
 .site-frame[data-site-mode="sketch"] .travel-jelly-actions button,
 .site-frame[data-site-mode="sketch"] .travel-jelly-delete,
 .site-frame[data-site-mode="sketch"] .travel-jelly-summary div span,

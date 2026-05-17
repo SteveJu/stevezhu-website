@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 type PlannerView = 'list' | 'editor';
@@ -12,6 +13,7 @@ type TravelRecord = {
   status: string;
   summary: string;
   companions: string[];
+  shareCode: string;
 };
 
 type TravelField = {
@@ -49,6 +51,14 @@ type PlannerPayload = {
 
 const initialTravels: TravelRecord[] = [];
 const companionStorageKey = 'stevezhu_travel_companions';
+
+const createShareCode = () => {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID().replaceAll('-', '').slice(0, 10);
+  }
+
+  return Math.random().toString(36).slice(2, 12);
+};
 
 const travelModules: TravelModule[] = [
   {
@@ -293,7 +303,8 @@ const blockManualDatePaste = (event: React.ClipboardEvent<HTMLInputElement>) => 
 const formatDate = (date: string) => {
   if (!date) return '未定日期';
   const [, month, day] = date.split('-');
-  return `${month}/${day}`;
+  const weekday = new Intl.DateTimeFormat('zh-CN', { weekday: 'short' }).format(new Date(`${date}T00:00:00`));
+  return `${month}/${day} ${weekday}`;
 };
 
 const DatePickerField = ({
@@ -425,8 +436,10 @@ const dedupeNames = (names: string[]) => {
   }, []);
 };
 
-const TravelPlannerWorkspace = () => {
-  const [view, setView] = useState<PlannerView>('list');
+const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
+  const isSharedMode = Boolean(shareCode);
+  const plannerApiPath = isSharedMode ? `/api/shared-travel/${shareCode}` : '/api/travel-planner';
+  const [view, setView] = useState<PlannerView>(isSharedMode ? 'editor' : 'list');
   const [travels, setTravels] = useState(initialTravels);
   const [activeTravelId, setActiveTravelId] = useState(initialTravels[0]?.id ?? '');
   const [timelineCards, setTimelineCards] = useState<Record<string, JellyCard[]>>({});
@@ -438,6 +451,7 @@ const TravelPlannerWorkspace = () => {
   const [selectedTravelDate, setSelectedTravelDate] = useState('');
   const [knownCompanions, setKnownCompanions] = useState<string[]>([]);
   const [newCompanionName, setNewCompanionName] = useState('');
+  const [isCompanionHistoryOpen, setIsCompanionHistoryOpen] = useState(false);
   const [isPlannerLoaded, setIsPlannerLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'loading' | 'saved' | 'saving' | 'error' | 'local'>('loading');
   const jellyIdCounter = useRef(0);
@@ -466,15 +480,17 @@ const TravelPlannerWorkspace = () => {
 
   useEffect(() => {
     if (!hasLoadedCompanions.current) return;
-    window.localStorage.setItem(companionStorageKey, JSON.stringify(knownCompanions));
-  }, [knownCompanions]);
+    if (!isSharedMode) {
+      window.localStorage.setItem(companionStorageKey, JSON.stringify(knownCompanions));
+    }
+  }, [isSharedMode, knownCompanions]);
 
   useEffect(() => {
     let isMounted = true;
 
     const loadPlannerState = async () => {
       try {
-        const response = await fetch('/api/travel-planner', { cache: 'no-store' });
+        const response = await fetch(plannerApiPath, { cache: 'no-store' });
         if (!response.ok) {
           throw new Error('Planner backend is not ready.');
         }
@@ -485,12 +501,16 @@ const TravelPlannerWorkspace = () => {
           const loadedTravels = result.payload.travels.map((travel) => ({
             ...travel,
             companions: dedupeNames(Array.isArray(travel.companions) ? travel.companions : []),
+            shareCode: travel.shareCode || '',
           }));
 
           setTravels(loadedTravels);
           setTimelineCards(result.payload.timelineCards);
           setFormValues(result.payload.formValues);
-          setKnownCompanions(dedupeNames(result.payload.knownCompanions).sort((a, b) => a.localeCompare(b)));
+          setKnownCompanions(
+            dedupeNames(isSharedMode ? loadedTravels.flatMap((travel) => travel.companions) : result.payload.knownCompanions)
+              .sort((a, b) => a.localeCompare(b)),
+          );
           setActiveTravelId(loadedTravels[0]?.id ?? '');
           setSelectedTravelDate(loadedTravels[0]?.startDate ?? '');
           travelIdCounter.current = getMaxNumericId(loadedTravels.map((travel) => travel.id), 'trip-');
@@ -519,7 +539,7 @@ const TravelPlannerWorkspace = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isSharedMode, plannerApiPath]);
 
   useEffect(() => {
     if (!isPlannerLoaded) return;
@@ -537,7 +557,7 @@ const TravelPlannerWorkspace = () => {
       };
 
       setSaveStatus('saving');
-      void fetch('/api/travel-planner', {
+      void fetch(plannerApiPath, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -555,7 +575,7 @@ const TravelPlannerWorkspace = () => {
         clearTimeout(saveTimer.current);
       }
     };
-  }, [formValues, isPlannerLoaded, knownCompanions, timelineCards, travels]);
+  }, [formValues, isPlannerLoaded, knownCompanions, plannerApiPath, timelineCards, travels]);
 
   const activeTravel = useMemo(() => {
     return travels.find((travel) => travel.id === activeTravelId) ?? travels[0];
@@ -619,6 +639,7 @@ const TravelPlannerWorkspace = () => {
       status: '新建',
       summary: `${formatDate(newTravel.startDate)} - ${formatDate(newTravel.endDate)}`,
       companions: [],
+      shareCode: createShareCode(),
     };
 
     setTravels((currentTravels) => [nextTravel, ...currentTravels]);
@@ -627,6 +648,43 @@ const TravelPlannerWorkspace = () => {
     setNewTravel({ title: '', startDate: '', endDate: '' });
     setIsCreatingTravel(false);
     setView('editor');
+  };
+
+  const deleteTravel = (travelId: string) => {
+    setTravels((currentTravels) => currentTravels.filter((travel) => travel.id !== travelId));
+    setTimelineCards((currentCards) => {
+      return Object.fromEntries(Object.entries(currentCards).filter(([id]) => id !== travelId));
+    });
+    setFormValues((currentValues) => {
+      return Object.fromEntries(Object.entries(currentValues).filter(([id]) => id !== travelId));
+    });
+
+    if (activeTravelId === travelId) {
+      setActiveTravelId('');
+      setSelectedTravelDate('');
+      setDraftJelly(null);
+      setEditingJellyId(null);
+    }
+  };
+
+  const getShareUrl = (code: string) => {
+    if (typeof window === 'undefined') return `/travel/${code}`;
+    return `${window.location.origin}/travel/${code}`;
+  };
+
+  const ensureTravelShareCode = async (travelId: string) => {
+    const travel = travels.find((currentTravel) => currentTravel.id === travelId);
+    const nextShareCode = travel?.shareCode || createShareCode();
+
+    setTravels((currentTravels) =>
+      currentTravels.map((currentTravel) => (
+        currentTravel.id === travelId
+          ? { ...currentTravel, shareCode: currentTravel.shareCode || nextShareCode }
+          : currentTravel
+      )),
+    );
+
+    await navigator.clipboard?.writeText(getShareUrl(nextShareCode)).catch(() => undefined);
   };
 
   const addCompanionToPool = (name: string) => {
@@ -660,13 +718,26 @@ const TravelPlannerWorkspace = () => {
     );
   };
 
+  const addTravelCompanion = (travelId: string, companionName: string) => {
+    setTravels((currentTravels) =>
+      currentTravels.map((travel) => {
+        if (travel.id !== travelId || travel.companions.includes(companionName)) return travel;
+
+        return {
+          ...travel,
+          companions: dedupeNames([...travel.companions, companionName]),
+        };
+      }),
+    );
+  };
+
   const addCompanionToActiveTravel = () => {
     if (!activeTravel) return;
 
     const normalizedName = addCompanionToPool(newCompanionName);
     if (!normalizedName) return;
 
-    toggleTravelCompanion(activeTravel.id, normalizedName);
+    addTravelCompanion(activeTravel.id, normalizedName);
     setNewCompanionName('');
   };
 
@@ -914,15 +985,17 @@ const TravelPlannerWorkspace = () => {
 
         <div className="travel-workspace-header">
           <div>
-            <p className="theme-kicker mb-4">Travel Editor</p>
+            <p className="theme-kicker mb-4">{isSharedMode ? 'Shared Travel' : 'Travel Editor'}</p>
             <h1 className="theme-heading">{activeTravel?.title ?? '旅行计划'}</h1>
             <p className="theme-copy mt-4 text-base leading-7">
               {activeTravel?.summary}
             </p>
           </div>
-          <button type="button" className="theme-button" onClick={() => setView('list')}>
-            返回列表
-          </button>
+          {!isSharedMode && (
+            <button type="button" className="theme-button" onClick={() => setView('list')}>
+              返回列表
+            </button>
+          )}
         </div>
 
         <div className="travel-editor-grid">
@@ -996,6 +1069,11 @@ const TravelPlannerWorkspace = () => {
 
           <aside className="theme-card travel-preview-panel">
             <p className="travel-panel-label">日期导航</p>
+            {isSharedMode && (
+              <Link href="/" className="travel-home-link">
+                返回 Steve 主页
+              </Link>
+            )}
             <div className={`travel-save-status is-${saveStatus}`}>
               <span>{saveStatusText}</span>
             </div>
@@ -1028,23 +1106,15 @@ const TravelPlannerWorkspace = () => {
                 )}
               </div>
 
-              {knownCompanions.length > 0 && (
-                <div className="travel-known-companions">
-                  {knownCompanions.map((companion) => {
-                    const isSelected = activeTravel?.companions?.includes(companion) ?? false;
-
-                    return (
-                      <button
-                        key={companion}
-                        type="button"
-                        className={isSelected ? 'is-selected' : ''}
-                        onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
-                      >
-                        {companion}
-                      </button>
-                    );
-                  })}
-                </div>
+              {!isSharedMode && (
+                <button
+                  type="button"
+                  className="travel-companion-history-trigger"
+                  onClick={() => setIsCompanionHistoryOpen(true)}
+                  disabled={knownCompanions.length === 0}
+                >
+                  以往
+                </button>
               )}
 
               <div className="travel-companion-add">
@@ -1063,6 +1133,33 @@ const TravelPlannerWorkspace = () => {
                   Add
                 </button>
               </div>
+
+              {isCompanionHistoryOpen && (
+                <div className="travel-companion-popover" role="dialog" aria-label="以往同行人员">
+                  <div className="travel-companion-popover-head">
+                    <span>以往同行</span>
+                    <button type="button" onClick={() => setIsCompanionHistoryOpen(false)}>
+                      Close
+                    </button>
+                  </div>
+                  <div className="travel-known-companions">
+                    {knownCompanions.map((companion) => {
+                      const isSelected = activeTravel?.companions?.includes(companion) ?? false;
+
+                      return (
+                        <button
+                          key={companion}
+                          type="button"
+                          className={isSelected ? 'is-selected' : ''}
+                          onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
+                        >
+                          {companion}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="travel-date-nav">
@@ -1145,22 +1242,37 @@ const TravelPlannerWorkspace = () => {
           </div>
         ) : (
           travels.map((travel) => (
-            <button
+            <div
               key={travel.id}
-              type="button"
               className="theme-card travel-history-card"
-              onClick={() => openEditor(travel.id)}
             >
-              <div>
+              <button type="button" onClick={() => openEditor(travel.id)}>
                 <span>{travel.status}</span>
                 <h2>{travel.title}</h2>
                 <p>{travel.summary}</p>
                 {travel.companions.length > 0 && (
                   <p>同行：{travel.companions.join(' / ')}</p>
                 )}
+              </button>
+              <div className="travel-history-actions">
+                <strong>{formatDate(travel.startDate)} - {formatDate(travel.endDate)}</strong>
+                {travel.shareCode && <span>Code: {travel.shareCode}</span>}
+                <button
+                  type="button"
+                  onClick={() => void ensureTravelShareCode(travel.id)}
+                  aria-label={`分享旅行计划 ${travel.title}`}
+                >
+                  Share
+                </button>
+                <button
+                  type="button"
+                  onClick={() => deleteTravel(travel.id)}
+                  aria-label={`删除旅行计划 ${travel.title}`}
+                >
+                  Delete
+                </button>
               </div>
-              <strong>{formatDate(travel.startDate)} - {formatDate(travel.endDate)}</strong>
-            </button>
+            </div>
           ))
         )}
       </div>

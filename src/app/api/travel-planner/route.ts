@@ -1,12 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isOwnerUnlocked } from '@/lib/ownerAuth';
-import { requestSupabase } from '@/lib/supabaseAdmin';
-
-const plannerStateId = 'default';
-
-type PlannerStateRow = {
-  payload: unknown;
-};
+import { isTravelPlannerPayload, loadTravelPlannerPayload, saveTravelPlannerPayload } from '@/lib/travelPlannerState';
 
 const unauthorizedResponse = () => NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
 
@@ -16,12 +10,8 @@ export async function GET() {
   }
 
   try {
-    const rows = await requestSupabase<PlannerStateRow[]>(
-      `/travel_planner_state?id=eq.${plannerStateId}&select=payload`,
-    );
-
     return NextResponse.json({
-      payload: rows[0]?.payload ?? null,
+      payload: await loadTravelPlannerPayload(),
     });
   } catch (error) {
     return NextResponse.json(
@@ -38,21 +28,12 @@ export async function PUT(request: Request) {
 
   const body = (await request.json().catch(() => null)) as { payload?: unknown } | null;
 
-  if (!body || !body.payload || typeof body.payload !== 'object') {
+  if (!body || !isTravelPlannerPayload(body.payload)) {
     return NextResponse.json({ error: 'Invalid planner payload.' }, { status: 400 });
   }
 
   try {
-    await requestSupabase('/travel_planner_state?on_conflict=id', {
-      method: 'POST',
-      headers: {
-        Prefer: 'resolution=merge-duplicates,return=minimal',
-      },
-      body: {
-        id: plannerStateId,
-        payload: body.payload,
-      },
-    });
+    await saveTravelPlannerPayload(body.payload);
 
     return NextResponse.json({ saved: true });
   } catch (error) {
