@@ -708,6 +708,29 @@ body {
   transform: translateY(-1px);
 }
 
+.travel-share-code {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+}
+
+.travel-history-actions .travel-share-code button {
+  display: grid;
+  width: 1.72rem;
+  height: 1.72rem;
+  place-items: center;
+  padding: 0;
+}
+
+.travel-share-code svg {
+  width: 0.92rem;
+  height: 0.92rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linejoin: round;
+  stroke-width: 1.9;
+}
+
 .travel-empty-state {
   padding: clamp(1.5rem, 4vw, 2rem);
 }
@@ -1376,6 +1399,16 @@ body {
   gap: 0.45rem;
 }
 
+.travel-known-companions {
+  display: grid;
+}
+
+.travel-known-companion-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.42rem;
+}
+
 .travel-companion-chips p {
   color: var(--mode-muted);
   font-size: 0.8rem;
@@ -1419,6 +1452,19 @@ body {
   background: color-mix(in srgb, var(--mode-accent) 12%, transparent);
   color: var(--mode-accent);
   transform: translateY(-1px);
+}
+
+.travel-known-companions .travel-known-companion-delete {
+  width: 1.85rem;
+  padding: 0;
+  color: var(--mode-accent-2);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.travel-known-companions .travel-known-companion-delete:hover {
+  border-color: var(--mode-accent-2);
+  color: var(--mode-accent-2);
 }
 
 .travel-companion-history-trigger {

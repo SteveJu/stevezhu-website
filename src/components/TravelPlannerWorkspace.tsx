@@ -454,6 +454,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   const [isCompanionHistoryOpen, setIsCompanionHistoryOpen] = useState(false);
   const [isPlannerLoaded, setIsPlannerLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'loading' | 'saved' | 'saving' | 'error' | 'local'>('loading');
+  const [copiedShareCode, setCopiedShareCode] = useState('');
   const jellyIdCounter = useRef(0);
   const travelIdCounter = useRef(0);
   const hasLoadedCompanions = useRef(false);
@@ -685,6 +686,14 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
     );
 
     await navigator.clipboard?.writeText(getShareUrl(nextShareCode)).catch(() => undefined);
+    setCopiedShareCode(nextShareCode);
+    window.setTimeout(() => setCopiedShareCode(''), 1400);
+  };
+
+  const copyShareCode = async (code: string) => {
+    await navigator.clipboard?.writeText(code).catch(() => undefined);
+    setCopiedShareCode(code);
+    window.setTimeout(() => setCopiedShareCode(''), 1400);
   };
 
   const addCompanionToPool = (name: string) => {
@@ -700,6 +709,12 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
     });
 
     return normalizedName;
+  };
+
+  const deleteKnownCompanion = (companionName: string) => {
+    setKnownCompanions((currentCompanions) =>
+      currentCompanions.filter((companion) => companion.toLowerCase() !== companionName.toLowerCase()),
+    );
   };
 
   const toggleTravelCompanion = (travelId: string, companionName: string) => {
@@ -1151,14 +1166,23 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
                       const isSelected = activeTravel?.companions?.includes(companion) ?? false;
 
                       return (
-                        <button
-                          key={companion}
-                          type="button"
-                          className={isSelected ? 'is-selected' : ''}
-                          onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
-                        >
-                          {companion}
-                        </button>
+                        <div key={companion} className="travel-known-companion-row">
+                          <button
+                            type="button"
+                            className={isSelected ? 'is-selected' : ''}
+                            onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
+                          >
+                            {companion}
+                          </button>
+                          <button
+                            type="button"
+                            className="travel-known-companion-delete"
+                            onClick={() => deleteKnownCompanion(companion)}
+                            aria-label={`删除以往同行 ${companion}`}
+                          >
+                            ×
+                          </button>
+                        </div>
                       );
                     })}
                   </div>
@@ -1260,13 +1284,27 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
               </button>
               <div className="travel-history-actions">
                 <strong>{formatDate(travel.startDate)} - {formatDate(travel.endDate)}</strong>
-                {travel.shareCode && <span>Code: {travel.shareCode}</span>}
+                {travel.shareCode && (
+                  <div className="travel-share-code">
+                    <span>Code: {travel.shareCode}</span>
+                    <button
+                      type="button"
+                      onClick={() => void copyShareCode(travel.shareCode)}
+                      aria-label={`复制分享 code ${travel.shareCode}`}
+                    >
+                      <svg aria-hidden="true" viewBox="0 0 24 24">
+                        <path d="M8 8h11v11H8z" />
+                        <path d="M5 16H4V4h12v1" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={() => void ensureTravelShareCode(travel.id)}
                   aria-label={`分享旅行计划 ${travel.title}`}
                 >
-                  Share
+                  {travel.shareCode && copiedShareCode === travel.shareCode ? 'Copied' : 'Share'}
                 </button>
                 <button
                   type="button"
