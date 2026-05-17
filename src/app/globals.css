@@ -218,6 +218,18 @@ body {
   transform: rotate(-0.5deg) translateY(-1px);
 }
 
+.theme-floating-mode-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 6.8rem;
+  z-index: 60;
+  opacity: 0.76;
+}
+
+.theme-floating-mode-toggle:hover {
+  opacity: 1;
+}
+
 .theme-mode-badge {
   position: fixed;
   right: 1rem;

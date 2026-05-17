@@ -4,10 +4,17 @@ import { SiteModeContext } from '@/contexts/SiteModeContext';
 import { getSiteMode, getSiteModeLabel, type SiteMode } from '@/lib/siteMode';
 import { useEffect, useState } from 'react';
 import OwnerAccess from './OwnerAccess';
+import SiteModeToggle from './SiteModeToggle';
 
 const storageKey = 'stevezhu-site-mode';
 
-const SiteModeFrame = ({ children }: { children: React.ReactNode }) => {
+const SiteModeFrame = ({
+  children,
+  showFloatingModeToggle = true,
+}: {
+  children: React.ReactNode;
+  showFloatingModeToggle?: boolean;
+}) => {
   const [mode, setMode] = useState<SiteMode>(() => getSiteMode());
   const [isManual, setIsManual] = useState(false);
 
@@ -53,6 +60,7 @@ const SiteModeFrame = ({ children }: { children: React.ReactNode }) => {
         className="site-frame snap-y snap-mandatory overflow-y-scroll h-screen"
       >
         {children}
+        {showFloatingModeToggle && <SiteModeToggle className="theme-floating-mode-toggle" />}
         <OwnerAccess />
         <a
           href="/Zhengqi_Zhu_Resume.pdf"

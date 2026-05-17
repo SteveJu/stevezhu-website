@@ -1,9 +1,9 @@
 'use client';
 
-import { useSiteMode } from '@/contexts/SiteModeContext';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import SiteModeToggle from './SiteModeToggle';
 
 const navItems = [
   { name: 'About', section: 1 },
@@ -17,9 +17,7 @@ const sectionIds = ['1', '2', '3', '4', '5', '6'];
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { mode, isManual, toggleMode } = useSiteMode();
   const activeSection = useScrollSpy(sectionIds);
-  const nextMode = mode === 'cyber' ? 'sketch' : 'cyber';
 
   useEffect(() => {
     const scrollRoot = document.querySelector('[data-scroll-container]');
@@ -83,17 +81,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          <button
-            type="button"
-            onClick={toggleMode}
-            className="theme-mode-toggle"
-            aria-label={`Switch to ${nextMode} mode`}
-            title={`Switch to ${nextMode} mode`}
-          >
-            <span className="theme-mode-toggle-dot" />
-            <span>{mode}</span>
-            {isManual && <span className="theme-mode-toggle-mark">manual</span>}
-          </button>
+          <SiteModeToggle />
         </div>
       </div>
     </nav>

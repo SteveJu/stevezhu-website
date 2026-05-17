@@ -10,7 +10,7 @@ import SiteModeFrame from "@/components/SiteModeFrame";
 
 export default function Home() {
   return (
-    <SiteModeFrame>
+    <SiteModeFrame showFloatingModeToggle={false}>
       <Navbar />
       <Hero />
       <About />
