@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Steve Zhu Style V2</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #060609;
+      color: #f7f7f2;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .panel {
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      padding: 34px;
+      border-right: 1px solid rgba(255,255,255,.12);
+    }
+    .label {
+      position: relative;
+      z-index: 3;
+      font-size: 12px;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      opacity: .72;
+    }
+    .nav {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 22px;
+      font-size: 13px;
+    }
+    .sig {
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+    }
+    .links {
+      display: flex;
+      gap: 20px;
+      opacity: .72;
+    }
+    .hero {
+      position: relative;
+      z-index: 3;
+      margin-top: 12vh;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(52px, 7vw, 112px);
+      line-height: .84;
+      letter-spacing: -.07em;
+      font-weight: 620;
+    }
+    p {
+      max-width: 520px;
+      margin: 26px 0 0;
+      line-height: 1.65;
+      font-size: 15px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .chip {
+      font-size: 12px;
+      padding: 8px 11px;
+    }
+    .timeline {
+      position: relative;
+      z-index: 3;
+      margin-top: 64px;
+      display: grid;
+      gap: 13px;
+      max-width: 590px;
+    }
+    .line {
+      display: grid;
+      grid-template-columns: 82px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .cyber {
+      background:
+        radial-gradient(circle at 70% 20%, rgba(255, 0, 153, .34), transparent 32%),
+        radial-gradient(circle at 20% 70%, rgba(0, 229, 255, .28), transparent 36%),
+        linear-gradient(145deg, #07060d 0%, #080b1d 54%, #020305 100%);
+      color: #eafcff;
+    }
+    .cyber:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 255, 255, .08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 0, 153, .07) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, black, transparent 86%);
+    }
+    .cyber:after {
+      content: "";
+      position: absolute;
+      width: 760px;
+      height: 760px;
+      right: -260px;
+      bottom: -280px;
+      background:
+        conic-gradient(from 120deg, transparent 0 18%, rgba(0,255,255,.55), transparent 32% 52%, rgba(255,0,153,.48), transparent 68% 100%);
+      filter: blur(4px);
+      opacity: .55;
+      border-radius: 50%;
+    }
+    .cyber .sig { filter: invert(1) drop-shadow(0 0 16px rgba(0,255,255,.85)); }
+    .cyber h1 {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      text-transform: uppercase;
+      text-shadow: 0 0 18px rgba(0,255,255,.35), 0 0 44px rgba(255,0,153,.18);
+    }
+    .cyber h1 span { color: #1fffe7; }
+    .cyber p { color: rgba(234,252,255,.72); }
+    .cyber .chip {
+      border: 1px solid rgba(31,255,231,.35);
+      background: rgba(3, 18, 28, .7);
+      box-shadow: inset 0 0 18px rgba(31,255,231,.08), 0 0 26px rgba(31,255,231,.08);
+      color: #b8fff7;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+    .cyber .line {
+      border: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(90deg, rgba(0,255,255,.11), rgba(255,0,153,.06));
+      padding: 12px 14px;
+      clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+    }
+    .cyber .line b { color: #ff4fd8; font-family: ui-monospace, monospace; }
+    .cyber .line em { color: #19ffe6; font-style: normal; }
+    .scan {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 180px;
+      background: linear-gradient(to bottom, transparent, rgba(0,255,255,.12), transparent);
+      animation: scan 4.5s linear infinite;
+      opacity: .7;
+    }
+    @keyframes scan {
+      from { transform: translateY(-180px); }
+      to { transform: translateY(110vh); }
+    }
+
+    .sketch {
+      background: #f7f2e8;
+      color: #171410;
+      border-right: 0;
+    }
+    .sketch:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(23,20,16,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23,20,16,.035) 1px, transparent 1px);
+      background-size: 28px 28px;
+      opacity: .8;
+    }
+    .sketch .sig { filter: none; }
+    .sketch .label, .sketch .links { opacity: .62; }
+    .sketch h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      letter-spacing: -.065em;
+    }
+    .sketch p { color: rgba(23,20,16,.68); }
+    .scribble {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .sketch .chip {
+      position: relative;
+      border: 1.6px solid #171410;
+      background: rgba(255,255,255,.25);
+      border-radius: 999px 820px 900px 760px / 760px 920px 740px 880px;
+      transform: rotate(-1.2deg);
+    }
+    .sketch .chip:nth-child(2) { transform: rotate(1.1deg); }
+    .sketch .chip:nth-child(3) { transform: rotate(-.4deg); }
+    .sketch .line {
+      padding: 13px 0;
+      border-bottom: 1.5px solid rgba(23,20,16,.28);
+    }
+    .sketch .line b {
+      font-family: "Bradley Hand", "Comic Sans MS", cursive;
+      font-size: 15px;
+      font-style: normal;
+    }
+    .sketch .line em {
+      font-style: normal;
+      border: 1.5px solid #171410;
+      padding: 5px 8px;
+      border-radius: 999px 830px 760px 880px / 700px 920px 780px 850px;
+    }
+    .drawn-card {
+      position: absolute;
+      right: 34px;
+      bottom: 42px;
+      width: min(43%, 320px);
+      min-height: 185px;
+      padding: 24px;
+      border: 2px solid #171410;
+      border-radius: 24px 18px 28px 16px / 18px 28px 16px 24px;
+      transform: rotate(1.6deg);
+      background: rgba(255,255,255,.18);
+      z-index: 2;
+    }
+    .drawn-card strong {
+      display: block;
+      font-family: Georgia, serif;
+      font-size: 26px;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+    .drawn-card div {
+      font-family: "Bradley Hand", "Comic Sans MS", cursive;
+      font-size: 18px;
+      line-height: 1.45;
+    }
+    @media (max-width: 1100px) {
+      .page { grid-template-columns: 1fr; }
+      .panel { min-height: 920px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="panel cyber">
+      <div class="scan"></div>
+      <div class="label">Direction A / Premium Cyberpunk</div>
+      <div class="nav">
+        <img class="sig" src="/Logo.PNG" alt="Steve Zhu signature" />
+        <div class="links"><span>systems</span><span>signals</span><span>frames</span></div>
+      </div>
+      <div class="hero">
+        <h1>Trust<br><span>Systems</span><br>Engineer</h1>
+        <p>High-contrast neon, cinematic depth, telemetry panels, and controlled motion. This makes your Meta / AI integrity work feel like a serious large-scale command center.</p>
+        <div class="chips">
+          <span class="chip">108M+ users</span>
+          <span class="chip">1.5T daily signals</span>
+          <span class="chip">96% precision</span>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="line"><b>2026</b><span>Instagram Youth Protection</span><em>online</em></div>
+        <div class="line"><b>2025</b><span>Horizon Creator Monetization</span><em>scaled</em></div>
+        <div class="line"><b>2021</b><span>Enterprise Data Platforms</span><em>stable</em></div>
+      </div>
+    </section>
+
+    <section class="panel sketch">
+      <svg class="scribble" viewBox="0 0 1000 1000" preserveAspectRatio="none">
+        <path d="M110 210 C180 135 270 135 330 205 S480 280 585 182 S820 105 900 230" fill="none" stroke="#171410" stroke-width="2.2" opacity=".22"/>
+        <path d="M85 720 C250 640 350 750 500 670 S735 558 902 665" fill="none" stroke="#171410" stroke-width="2" opacity=".18"/>
+        <circle cx="820" cy="280" r="70" fill="none" stroke="#171410" stroke-width="2.4" opacity=".18"/>
+        <path d="M760 855 C805 820 855 820 905 858" fill="none" stroke="#171410" stroke-width="2.3" opacity=".2"/>
+      </svg>
+      <div class="label">Direction B / Elevated Hand-Drawn</div>
+      <div class="nav">
+        <img class="sig" src="/Logo.PNG" alt="Steve Zhu signature" />
+        <div class="links"><span>work</span><span>notes</span><span>photos</span></div>
+      </div>
+      <div class="hero">
+        <h1>Engineering<br>with a human<br>line.</h1>
+        <p>Loose hand-drawn marks, editorial typography, imperfect borders, and small annotated details. More personal and memorable, but still grown-up.</p>
+        <div class="chips">
+          <span class="chip">AI systems</span>
+          <span class="chip">Photography</span>
+          <span class="chip">NYC</span>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="line"><b>Meta</b><span>LLM safety pipeline ownership</span><em>2025-now</em></div>
+        <div class="line"><b>BofA</b><span>Enterprise visualization platforms</span><em>2021-25</em></div>
+        <div class="line"><b>OSU</b><span>Computer vision research tooling</span><em>2020-21</em></div>
+      </div>
+      <aside class="drawn-card">
+        <strong>Selected signal</strong>
+        <div>systems at scale, but explained like a thoughtful sketchbook.</div>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,64 +1,57 @@
 const Contact = () => {
   return (
-    <section id="contact" data-section="4" className="min-h-screen bg-white dark:bg-black flex items-center justify-center px-6 snap-start">
+    <section id="contact" data-section="4" className="theme-section min-h-screen flex items-center justify-center px-6 py-20 snap-start">
       <div className="max-w-4xl w-full text-center space-y-12">
-        <h2 className="text-5xl md:text-6xl font-light text-gray-900 dark:text-white">
+        <p className="theme-kicker">Transmit Signal</p>
+        <h2 className="theme-heading">
           Get In Touch
         </h2>
         
-        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        <p className="theme-copy text-lg max-w-2xl mx-auto">
           I&apos;m always open to discussing new opportunities, collaborations,
           or just having a conversation about technology and photography.
         </p>
 
-        {/* Resume Download */}
         <div className="flex justify-center mb-8">
           <a
             href="/Zhengqi_Zhu_Resume.pdf"
             download="Zhengqi_Zhu_Resume.pdf"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            className="theme-button"
           >
-            <span>📄</span>
             <span>Download Resume</span>
           </a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-          {/* Email */}
-          <div className="group p-8 border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors duration-200">
-            <div className="text-2xl mb-4">📧</div>
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">Email</h3>
+          <div className="theme-card group p-8 transition-colors duration-200">
+            <div className="theme-card-title text-xl mb-2">Email</div>
             <a 
               href="mailto:steveju546@gmail.com"
-              className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              className="theme-copy transition-colors duration-200"
             >
               steveju546@gmail.com
             </a>
           </div>
 
-          {/* LinkedIn */}
-          <div className="group p-8 border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors duration-200">
-            <div className="text-2xl mb-4">💼</div>
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">LinkedIn</h3>
+          <div className="theme-card group p-8 transition-colors duration-200">
+            <div className="theme-card-title text-xl mb-2">LinkedIn</div>
             <a 
               href="https://linkedin.com/in/zhengqi-zhu-967714139"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              className="theme-copy transition-colors duration-200"
             >
               zhengqi-zhu
             </a>
           </div>
 
-          {/* GitHub */}
-          <div className="group p-8 border border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-colors duration-200">
-            <div className="text-2xl mb-4">🚀</div>
-            <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-2">GitHub</h3>
+          <div className="theme-card group p-8 transition-colors duration-200">
+            <div className="theme-card-title text-xl mb-2">GitHub</div>
             <a 
               href="https://github.com/SteveJu"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+              className="theme-copy transition-colors duration-200"
             >
               SteveJu
             </a>

@@ -54,25 +54,23 @@ const Photography = () => {
   ];
 
   return (
-    <section id="photography" data-section="3" className="min-h-screen bg-black text-white py-20 snap-start">
+    <section id="photography" data-section="3" className="theme-section min-h-screen py-20 snap-start">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-6xl md:text-8xl font-light tracking-tight mb-4">
+          <p className="theme-kicker mb-4">Frames</p>
+          <h2 className="theme-heading">
             Photography
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="theme-copy text-xl max-w-2xl mx-auto mt-4">
             Capturing moments, telling stories through the lens
           </p>
         </div>
 
-        {/* Photo Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {albums.map((album) => (
             <Link key={album.id} href={`/photography/${album.slug}`}>
-              <div className="group relative aspect-[4/3] overflow-hidden rounded-lg cursor-pointer transform transition-all duration-500 hover:scale-105"
+              <div className="theme-photo-card group relative aspect-[4/3] overflow-hidden cursor-pointer transform transition-all duration-500 hover:scale-[1.02]"
               >
-              {/* Background Image */}
               <Image
                 src={album.cover}
                 alt={`${album.title} cover`}
@@ -81,10 +79,8 @@ const Photography = () => {
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
               
-              {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
               
-              {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                 <h3 className="text-2xl font-light text-white mb-2">
                   {album.title}
@@ -97,16 +93,14 @@ const Photography = () => {
                 </p>
               </div>
 
-              {/* Hover Effect */}
-              <div className="absolute inset-0 border-2 border-white/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 border-2 border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
             </Link>
           ))}
         </div>
 
-        {/* Bottom Text */}
         <div className="text-center mt-16">
-          <p className="text-gray-500 text-lg">
+          <p className="theme-muted text-lg">
             More albums coming soon...
           </p>
         </div>
