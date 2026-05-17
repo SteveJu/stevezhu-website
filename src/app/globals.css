@@ -1341,8 +1341,23 @@ body {
 }
 
 .travel-companion-chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
   border-color: var(--mode-accent);
   color: var(--mode-accent);
+}
+
+.travel-companion-chips button strong {
+  color: var(--mode-accent-2);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.travel-companion-chips button:hover {
+  border-color: var(--mode-accent-2);
+  color: var(--mode-accent-2);
+  transform: translateY(-1px);
 }
 
 .travel-known-companions button:hover,

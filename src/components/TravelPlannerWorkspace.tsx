@@ -407,6 +407,24 @@ const getMaxNumericId = (ids: string[], prefix: string) => {
   }, 0);
 };
 
+const normalizeName = (name: string) => name.trim();
+
+const dedupeNames = (names: string[]) => {
+  const seenNames = new Set<string>();
+
+  return names.reduce<string[]>((dedupedNames, name) => {
+    const normalizedName = normalizeName(name);
+    const nameKey = normalizedName.toLowerCase();
+
+    if (!normalizedName || seenNames.has(nameKey)) {
+      return dedupedNames;
+    }
+
+    seenNames.add(nameKey);
+    return [...dedupedNames, normalizedName];
+  }, []);
+};
+
 const TravelPlannerWorkspace = () => {
   const [view, setView] = useState<PlannerView>('list');
   const [travels, setTravels] = useState(initialTravels);
@@ -466,13 +484,13 @@ const TravelPlannerWorkspace = () => {
         if (isMounted && isPlannerPayload(result.payload)) {
           const loadedTravels = result.payload.travels.map((travel) => ({
             ...travel,
-            companions: Array.isArray(travel.companions) ? travel.companions : [],
+            companions: dedupeNames(Array.isArray(travel.companions) ? travel.companions : []),
           }));
 
           setTravels(loadedTravels);
           setTimelineCards(result.payload.timelineCards);
           setFormValues(result.payload.formValues);
-          setKnownCompanions(result.payload.knownCompanions);
+          setKnownCompanions(dedupeNames(result.payload.knownCompanions).sort((a, b) => a.localeCompare(b)));
           setActiveTravelId(loadedTravels[0]?.id ?? '');
           setSelectedTravelDate(loadedTravels[0]?.startDate ?? '');
           travelIdCounter.current = getMaxNumericId(loadedTravels.map((travel) => travel.id), 'trip-');
@@ -612,7 +630,7 @@ const TravelPlannerWorkspace = () => {
   };
 
   const addCompanionToPool = (name: string) => {
-    const normalizedName = name.trim();
+    const normalizedName = normalizeName(name);
     if (!normalizedName) return '';
 
     setKnownCompanions((currentCompanions) => {
@@ -636,7 +654,7 @@ const TravelPlannerWorkspace = () => {
           ...travel,
           companions: hasCompanion
             ? travel.companions.filter((name) => name !== companionName)
-            : [...travel.companions, companionName],
+            : dedupeNames([...travel.companions, companionName]),
         };
       }),
     );
@@ -648,15 +666,7 @@ const TravelPlannerWorkspace = () => {
     const normalizedName = addCompanionToPool(newCompanionName);
     if (!normalizedName) return;
 
-    setTravels((currentTravels) =>
-      currentTravels.map((travel) => {
-        if (travel.id !== activeTravel.id || travel.companions.includes(normalizedName)) return travel;
-        return {
-          ...travel,
-          companions: [...travel.companions, normalizedName],
-        };
-      }),
-    );
+    toggleTravelCompanion(activeTravel.id, normalizedName);
     setNewCompanionName('');
   };
 
@@ -1006,9 +1016,11 @@ const TravelPlannerWorkspace = () => {
                     <button
                       key={companion}
                       type="button"
+                      aria-label={`删除同行人员 ${companion}`}
                       onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
                     >
-                      {companion}
+                      <span>{companion}</span>
+                      <strong aria-hidden="true">×</strong>
                     </button>
                   ))
                 ) : (
