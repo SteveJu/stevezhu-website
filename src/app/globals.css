@@ -1306,6 +1306,35 @@ body {
   margin-top: 1.35rem;
 }
 
+.travel-ai-fill-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--mode-line);
+  background: transparent;
+  color: var(--mode-muted);
+  cursor: pointer;
+  padding: 0.8rem 1.1rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-ai-fill-button:hover {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+  transform: translateY(-2px);
+}
+
+.travel-ai-fill-button input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
 .travel-secondary-button {
   border: 1px solid var(--mode-line);
   background: transparent;
@@ -1668,6 +1697,7 @@ body {
 }
 
 .site-frame[data-site-mode="cyber"] .travel-add-button,
+.site-frame[data-site-mode="cyber"] .travel-ai-fill-button,
 .site-frame[data-site-mode="cyber"] .travel-budget-total,
 .site-frame[data-site-mode="cyber"] .travel-companion-add button,
 .site-frame[data-site-mode="cyber"] .travel-companion-add input,
@@ -1704,6 +1734,7 @@ body {
 }
 
 .site-frame[data-site-mode="sketch"] .travel-add-button,
+.site-frame[data-site-mode="sketch"] .travel-ai-fill-button,
 .site-frame[data-site-mode="sketch"] .travel-budget-total,
 .site-frame[data-site-mode="sketch"] .travel-companion-add button,
 .site-frame[data-site-mode="sketch"] .travel-companion-add input,

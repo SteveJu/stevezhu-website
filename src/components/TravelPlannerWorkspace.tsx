@@ -455,6 +455,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   const [isPlannerLoaded, setIsPlannerLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'loading' | 'saved' | 'saving' | 'error' | 'local'>('loading');
   const [copiedShareCode, setCopiedShareCode] = useState('');
+  const [aiFillStatus, setAiFillStatus] = useState<Record<string, 'idle' | 'reading' | 'filled' | 'error'>>({});
   const jellyIdCounter = useRef(0);
   const travelIdCounter = useRef(0);
   const hasLoadedCompanions = useRef(false);
@@ -840,6 +841,61 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
     }));
   };
 
+  const readFileAsBase64 = (file: File) => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const fillJellyFromScreenshot = async (card: JellyCard, file: File) => {
+    if (!activeTravel) return;
+
+    setAiFillStatus((currentStatus) => ({ ...currentStatus, [card.id]: 'reading' }));
+
+    try {
+      const imageBase64 = await readFileAsBase64(file);
+      const response = await fetch('/api/travel-planner/ai-fill', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          moduleId: card.moduleId,
+          imageBase64,
+          mimeType: file.type,
+          shareCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('AI fill failed.');
+      }
+
+      const result = await response.json() as { fields?: Record<string, string> };
+      const fields = result.fields ?? {};
+
+      setFormValues((currentValues) => ({
+        ...currentValues,
+        [activeTravel.id]: {
+          ...currentValues[activeTravel.id],
+          [card.id]: {
+            ...currentValues[activeTravel.id]?.[card.id],
+            ...fields,
+          },
+        },
+      }));
+      setAiFillStatus((currentStatus) => ({ ...currentStatus, [card.id]: 'filled' }));
+      window.setTimeout(() => {
+        setAiFillStatus((currentStatus) => ({ ...currentStatus, [card.id]: 'idle' }));
+      }, 1800);
+    } catch {
+      setAiFillStatus((currentStatus) => ({ ...currentStatus, [card.id]: 'error' }));
+    }
+  };
+
   const jumpToDate = (date: string) => {
     setSelectedTravelDate(date);
     document.getElementById(`travel-date-${date}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -962,6 +1018,28 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
                 })}
               </div>
               <div className="travel-entry-actions">
+                <label className="travel-ai-fill-button">
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/heic,image/heif"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      event.target.value = '';
+                      if (file) {
+                        void fillJellyFromScreenshot(card, file);
+                      }
+                    }}
+                  />
+                  <span>
+                    {aiFillStatus[card.id] === 'reading'
+                      ? 'AI reading...'
+                      : aiFillStatus[card.id] === 'filled'
+                        ? 'AI filled'
+                        : aiFillStatus[card.id] === 'error'
+                          ? 'AI failed'
+                          : 'AI Fill Screenshot'}
+                  </span>
+                </label>
                 <button
                   type="button"
                   className="theme-button"
