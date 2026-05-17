@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useSiteMode } from '@/contexts/SiteModeContext';
+import { type MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 type PlannerView = 'list' | 'editor';
 
@@ -437,6 +439,7 @@ const dedupeNames = (names: string[]) => {
 };
 
 const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
+  const { mode } = useSiteMode();
   const isSharedMode = Boolean(shareCode);
   const plannerApiPath = isSharedMode ? `/api/shared-travel/${shareCode}` : '/api/travel-planner';
   const [view, setView] = useState<PlannerView>(isSharedMode ? 'editor' : 'list');
@@ -452,6 +455,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   const [knownCompanions, setKnownCompanions] = useState<string[]>([]);
   const [newCompanionName, setNewCompanionName] = useState('');
   const [isCompanionHistoryOpen, setIsCompanionHistoryOpen] = useState(false);
+  const [companionHistoryPosition, setCompanionHistoryPosition] = useState<{ left: number; top: number } | null>(null);
   const [isPlannerLoaded, setIsPlannerLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'loading' | 'saved' | 'saving' | 'error' | 'local'>('loading');
   const [copiedShareCode, setCopiedShareCode] = useState('');
@@ -461,6 +465,24 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   const travelIdCounter = useRef(0);
   const hasLoadedCompanions = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const openCompanionHistory = (event: MouseEvent<HTMLButtonElement>) => {
+    if (isCompanionHistoryOpen) {
+      setIsCompanionHistoryOpen(false);
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const popoverWidth = 272;
+    const left = Math.min(rect.right + 12, window.innerWidth - popoverWidth - 16);
+    const top = Math.min(rect.top, window.innerHeight - 260);
+
+    setCompanionHistoryPosition({
+      left: Math.max(16, left),
+      top: Math.max(16, top),
+    });
+    setIsCompanionHistoryOpen(true);
+  };
 
   useEffect(() => {
     try {
@@ -1318,7 +1340,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
                 <button
                   type="button"
                   className="travel-companion-history-trigger"
-                  onClick={() => setIsCompanionHistoryOpen(true)}
+                  onClick={openCompanionHistory}
                   disabled={knownCompanions.length === 0}
                 >
                   以往
@@ -1342,45 +1364,59 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
                 </button>
               </div>
 
-              {isCompanionHistoryOpen && (
-                <div className="travel-companion-popover" role="dialog" aria-label="以往同行人员">
-                  <div className="travel-companion-popover-head">
-                    <span>以往同行</span>
-                    <button
-                      type="button"
-                      onClick={() => setIsCompanionHistoryOpen(false)}
-                      aria-label="关闭以往同行人员"
+              {isCompanionHistoryOpen &&
+                typeof document !== 'undefined' &&
+                createPortal(
+                  <div className="site-frame travel-companion-portal" data-site-mode={mode}>
+                    <div
+                      className="travel-companion-popover"
+                      role="dialog"
+                      aria-label="以往同行人员"
+                      style={
+                        companionHistoryPosition
+                          ? { left: companionHistoryPosition.left, top: companionHistoryPosition.top }
+                          : undefined
+                      }
                     >
-                      ×
-                    </button>
-                  </div>
-                  <div className="travel-known-companions">
-                    {knownCompanions.map((companion) => {
-                      const isSelected = activeTravel?.companions?.includes(companion) ?? false;
+                      <div className="travel-companion-popover-head">
+                        <span>以往同行</span>
+                        <button
+                          type="button"
+                          onClick={() => setIsCompanionHistoryOpen(false)}
+                          aria-label="关闭以往同行人员"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <div className="travel-known-companions">
+                        {knownCompanions.map((companion) => {
+                          const isSelected = activeTravel?.companions?.includes(companion) ?? false;
 
-                      return (
-                        <div key={companion} className="travel-known-companion-row">
-                          <button
-                            type="button"
-                            className={isSelected ? 'is-selected' : ''}
-                            onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
-                          >
-                            {companion}
-                          </button>
-                          <button
-                            type="button"
-                            className="travel-known-companion-delete"
-                            onClick={() => deleteKnownCompanion(companion)}
-                            aria-label={`删除以往同行 ${companion}`}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                          return (
+                            <div key={companion} className="travel-known-companion-row">
+                              <button
+                                type="button"
+                                className={isSelected ? 'is-selected' : ''}
+                                onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
+                              >
+                                {companion}
+                              </button>
+                              <button
+                                type="button"
+                                className="travel-known-companion-delete"
+                                onClick={() => deleteKnownCompanion(companion)}
+                                aria-label={`删除以往同行 ${companion}`}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>,
+                  document.body,
+                )}
             </div>
 
             <div className="travel-date-nav">
