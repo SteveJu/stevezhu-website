@@ -7,7 +7,7 @@ import Contact from "@/components/Contact";
 
 export default function Home() {
   return (
-    <main className="snap-y snap-mandatory overflow-y-scroll h-screen">
+    <main data-scroll-container className="snap-y snap-mandatory overflow-y-scroll h-screen">
       <Navbar />
       <Hero />
       <About />

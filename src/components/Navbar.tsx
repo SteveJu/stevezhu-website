@@ -4,17 +4,31 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
 import { useState, useEffect } from 'react';
 
+const navItems = [
+  { name: 'About', section: 1 },
+  { name: 'Experience', section: 2 },
+  { name: 'Photography', section: 3 },
+  { name: 'Contact', section: 4 }
+];
+const sectionIds = ['1', '2', '3', '4'];
+
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
-  const activeSection = useScrollSpy(['1', '2', '3', '4']);
+  const activeSection = useScrollSpy(sectionIds);
 
   useEffect(() => {
+    const scrollRoot = document.querySelector('[data-scroll-container]');
+    if (!scrollRoot) return;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(scrollRoot.scrollTop > 50);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    scrollRoot.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => scrollRoot.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -29,12 +43,7 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-8 text-sm">
-          {[
-            { name: 'About', section: 1 },
-            { name: 'Experience', section: 2 },
-            { name: 'Photography', section: 3 },
-            { name: 'Contact', section: 4 }
-          ].map((item) => (
+          {navItems.map((item) => (
             <button
               key={item.name}
               onClick={() => {

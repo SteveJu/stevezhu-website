@@ -12,7 +12,6 @@ export const useSectionScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           const sections = document.querySelectorAll('[data-section]');
-          const scrollY = window.scrollY;
           const viewportHeight = window.innerHeight;
           
           sections.forEach((section, index) => {

@@ -6,33 +6,30 @@ export const useScrollSpy = (sectionIds: string[]) => {
   const [activeSection, setActiveSection] = useState('');
 
   useEffect(() => {
-    const handleScroll = () => {
-      const sections = sectionIds.map(id => ({
-        id,
-        element: document.querySelector(`[data-section="${id}"]`),
-      }));
+    const scrollRoot = document.querySelector('[data-scroll-container]');
+    const sections = sectionIds
+      .map((id) => document.querySelector(`[data-section="${id}"]`))
+      .filter((section): section is Element => Boolean(section));
 
-      const scrollY = window.scrollY + 100; // Offset for navbar
+    if (sections.length === 0) return;
 
-      let current = '';
-      sections.forEach(({ id, element }) => {
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          const top = rect.top + window.scrollY;
-          
-          if (scrollY >= top) {
-            current = id;
-          }
-        }
-      });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleSection = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
 
-      setActiveSection(current);
-    };
+        const id = visibleSection?.target.getAttribute('data-section');
+        if (id) setActiveSection(id);
+      },
+      {
+        root: scrollRoot,
+        threshold: [0.45, 0.6, 0.75],
+      }
+    );
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
-    
-    return () => window.removeEventListener('scroll', handleScroll);
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, [sectionIds]);
 
   return activeSection;

@@ -7,9 +7,21 @@ const Contact = () => {
         </h2>
         
         <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          I'm always open to discussing new opportunities, collaborations, 
+          I&apos;m always open to discussing new opportunities, collaborations,
           or just having a conversation about technology and photography.
         </p>
+
+        {/* Resume Download */}
+        <div className="flex justify-center mb-8">
+          <a
+            href="/Zhengqi_Zhu_Resume.pdf"
+            download="Zhengqi_Zhu_Resume.pdf"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+          >
+            <span>📄</span>
+            <span>Download Resume</span>
+          </a>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
           {/* Email */}

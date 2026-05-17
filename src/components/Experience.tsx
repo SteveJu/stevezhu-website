@@ -1,3 +1,6 @@
+import Image from 'next/image';
+import SkillsRadarSection from './SkillsRadarSection';
+
 const Experience = () => {
   const experiences = [
     {
@@ -86,7 +89,13 @@ const Experience = () => {
             <div key={index} className="bg-white border-l-4 border-blue-500 p-6 shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 flex-shrink-0">
-                  <img src={exp.logo} alt={`${exp.company} logo`} className="w-full h-full object-contain" />
+                  <Image
+                    src={exp.logo}
+                    alt={`${exp.company} logo`}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <div className="flex-1">
                   <div className="text-blue-600 font-bold text-xl">• {exp.title}</div>
@@ -102,7 +111,7 @@ const Experience = () => {
                   </ul>
 
                   <div className="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm">
-                    <div>// Tech Stack</div>
+                    <div>{'// Tech Stack'}</div>
                     <div>const tools = {JSON.stringify(exp.tech)};</div>
                   </div>
                 </div>
@@ -118,7 +127,13 @@ const Experience = () => {
             <div key={index} className="bg-white border-l-4 border-purple-500 p-6 shadow-lg">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 flex-shrink-0">
-                  <img src={edu.logo} alt={`${edu.school} logo`} className="w-full h-full object-contain" />
+                  <Image
+                    src={edu.logo}
+                    alt={`${edu.school} logo`}
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <div className="flex-1">
                   <div className="text-purple-600 font-bold text-lg">• {edu.degree}</div>
@@ -129,6 +144,12 @@ const Experience = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Skills Radar */}
+        <div className="mt-16">
+          <h3 className="text-3xl font-light text-center mb-12 text-blue-600">Technical Skills Overview</h3>
+          <SkillsRadarSection />
         </div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import { useEffect } from 'react';
 
 interface LightboxProps {
   isOpen: boolean;
@@ -78,9 +79,12 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
 
       {/* Image */}
       <div className="relative max-w-[90vw] max-h-[90vh]">
-        <img
+        <Image
           src={images[currentIndex]}
           alt={`Photo ${currentIndex + 1}`}
+          width={1200}
+          height={900}
+          sizes="90vw"
           className="max-w-full max-h-full object-contain"
         />
       </div>

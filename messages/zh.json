@@ -1,0 +1,34 @@
+{
+  "nav": {
+    "about": "关于我",
+    "experience": "工作经历",
+    "photography": "摄影作品", 
+    "contact": "联系方式"
+  },
+  "hero": {
+    "title": "朱正琪",
+    "subtitle": "软件工程师 • AI爱好者 • 摄影师",
+    "aboutBtn": "关于我",
+    "experienceBtn": "工作经历",
+    "photographyBtn": "摄影作品",
+    "contactBtn": "联系方式"
+  },
+  "about": {
+    "title": "关于我", 
+    "description": "我是Meta的软件工程师，在Instagram青少年保护团队工作，构建AI系统来检测霸凌和骚扰行为。拥有Columbia和Stanford的机器学习背景，我将技术专长与创造更安全数字空间的热情相结合。",
+    "details": "不编程的时候，你会发现我在用镜头捕捉瞬间，和朋友们探索纽约，或者尝试最新的AI工具。"
+  },
+  "experience": {
+    "title": "工作经历",
+    "education": "教育背景", 
+    "skillsTitle": "技术技能概览"
+  },
+  "contact": {
+    "title": "联系我",
+    "description": "我总是乐于讨论新机会、合作，或者仅仅是关于技术和摄影的对话。",
+    "email": "邮箱",
+    "linkedin": "领英",
+    "github": "GitHub", 
+    "downloadResume": "下载简历"
+  }
+}

@@ -6,13 +6,13 @@ const About = () => {
           About Me
         </h2>
         <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed">
-          I'm a software engineer at Meta working on Instagram's Youth Protection team, 
-          building AI systems to detect bullying and harassment. With a background in ML 
-          from Columbia and Stanford, I combine technical expertise with a passion for 
+          I&apos;m a software engineer at Meta working on Instagram&apos;s Youth Protection team,
+          building AI systems to detect bullying and harassment. With a background in ML
+          from Columbia and Stanford, I combine technical expertise with a passion for
           creating safer digital spaces.
         </p>
         <p className="text-base md:text-lg text-gray-500 dark:text-gray-500">
-          When not coding, you'll find me capturing moments through photography, 
+          When not coding, you&apos;ll find me capturing moments through photography,
           exploring NYC with friends, or experimenting with the latest AI tools.
         </p>
       </div>

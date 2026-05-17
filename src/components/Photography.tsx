@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 const Photography = () => {
@@ -72,9 +73,12 @@ const Photography = () => {
               <div className="group relative aspect-[4/3] overflow-hidden rounded-lg cursor-pointer transform transition-all duration-500 hover:scale-105"
               >
               {/* Background Image */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                style={{ backgroundImage: `url(${album.cover})` }}
+              <Image
+                src={album.cover}
+                alt={`${album.title} cover`}
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
               
               {/* Overlay */}
