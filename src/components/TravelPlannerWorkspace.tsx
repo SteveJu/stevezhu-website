@@ -456,6 +456,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   const [saveStatus, setSaveStatus] = useState<'loading' | 'saved' | 'saving' | 'error' | 'local'>('loading');
   const [copiedShareCode, setCopiedShareCode] = useState('');
   const [aiFillStatus, setAiFillStatus] = useState<Record<string, 'idle' | 'reading' | 'filled' | 'error'>>({});
+  const [generalAiFillStatus, setGeneralAiFillStatus] = useState<'idle' | 'reading' | 'filled' | 'error'>('idle');
   const jellyIdCounter = useRef(0);
   const travelIdCounter = useRef(0);
   const hasLoadedCompanions = useRef(false);
@@ -612,7 +613,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
 
   const saveStatusText = {
     loading: '正在连接后端',
-    saved: '已保存到 Supabase',
+    saved: '已保存',
     saving: '正在保存',
     error: '保存失败',
     local: '本地模式',
@@ -758,7 +759,11 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   };
 
   const startDraftJelly = (moduleId: TravelModule['id']) => {
-    if (!activeTravel) return;
+    createDraftJelly(moduleId, {});
+  };
+
+  const createDraftJelly = (moduleId: TravelModule['id'], initialValues: Record<string, string>) => {
+    if (!activeTravel) return null;
 
     jellyIdCounter.current += 1;
     const nextDraft: JellyCard = {
@@ -767,6 +772,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
     };
 
     setDraftJelly(nextDraft);
+    setEditingJellyId(null);
     setFormValues((currentValues) => ({
       ...currentValues,
       [activeTravel.id]: {
@@ -775,9 +781,12 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
           [travelDateFields[moduleId]]: activeSelectedDate || activeTravel.startDate,
           [travelTimeFields[moduleId]]: '09:00',
           ...travelDefaultValues[moduleId],
+          ...initialValues,
         },
       },
     }));
+
+    return nextDraft;
   };
 
   const saveDraftJelly = () => {
@@ -926,6 +935,56 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
       }, 1800);
     } catch {
       setAiFillStatus((currentStatus) => ({ ...currentStatus, [card.id]: 'error' }));
+    }
+  };
+
+  const createJellyFromScreenshot = async (file: File) => {
+    if (!activeTravel) return;
+
+    setGeneralAiFillStatus('reading');
+
+    try {
+      const imageBase64 = await readFileAsBase64(file);
+      const response = await fetch('/api/travel-planner/ai-fill', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageBase64,
+          mimeType: file.type,
+          shareCode,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('AI fill failed.');
+      }
+
+      const result = await response.json() as { moduleId?: TravelModule['id'] | null; fields?: Record<string, string> };
+      if (!result.moduleId || !getModule(result.moduleId)) {
+        window.alert('没有检测到信息');
+        setGeneralAiFillStatus('idle');
+        return;
+      }
+
+      const temporaryCard: JellyCard = {
+        id: 'ai-validation',
+        moduleId: result.moduleId,
+      };
+      const fields = getValidatedAiFields(temporaryCard, result.fields ?? {});
+
+      if (Object.keys(fields).length === 0) {
+        window.alert('没有检测到信息');
+        setGeneralAiFillStatus('idle');
+        return;
+      }
+
+      createDraftJelly(result.moduleId, fields);
+      setGeneralAiFillStatus('filled');
+      window.setTimeout(() => setGeneralAiFillStatus('idle'), 1800);
+    } catch {
+      setGeneralAiFillStatus('error');
     }
   };
 
@@ -1155,7 +1214,31 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
                 <p className="travel-panel-label">旅行果冻</p>
                 <h2>Calendar Timeline</h2>
               </div>
-              <span>{activeCards.length} saved</span>
+              <div className="travel-entry-heading-actions">
+                <label className="travel-ai-fill-button">
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/heic,image/heif"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      event.target.value = '';
+                      if (file) {
+                        void createJellyFromScreenshot(file);
+                      }
+                    }}
+                  />
+                  <span>
+                    {generalAiFillStatus === 'reading'
+                      ? 'AI reading...'
+                      : generalAiFillStatus === 'filled'
+                        ? 'AI created'
+                        : generalAiFillStatus === 'error'
+                          ? 'AI failed'
+                          : 'AI filling'}
+                  </span>
+                </label>
+                <span>{activeCards.length} saved</span>
+              </div>
             </div>
 
             <div className="travel-timeline-list">

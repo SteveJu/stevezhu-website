@@ -1019,7 +1019,14 @@ body {
   margin-bottom: 1.25rem;
 }
 
-.travel-entry-heading > span {
+.travel-entry-heading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.travel-entry-heading-actions > span {
   border: 1px solid var(--mode-line);
   color: var(--mode-accent);
   padding: 0.35rem 0.6rem;
@@ -1724,7 +1731,7 @@ body {
 .site-frame[data-site-mode="cyber"] .travel-timeline-empty,
 .site-frame[data-site-mode="cyber"] .travel-timeline-marker,
 .site-frame[data-site-mode="cyber"] .travel-timeline-content,
-.site-frame[data-site-mode="cyber"] .travel-entry-heading > span,
+.site-frame[data-site-mode="cyber"] .travel-entry-heading-actions > span,
 .site-frame[data-site-mode="cyber"] .travel-secondary-button,
 .site-frame[data-site-mode="cyber"] .travel-form-grid input,
 .site-frame[data-site-mode="cyber"] .travel-form-grid select,
@@ -1761,7 +1768,7 @@ body {
 .site-frame[data-site-mode="sketch"] .travel-timeline-empty,
 .site-frame[data-site-mode="sketch"] .travel-timeline-marker,
 .site-frame[data-site-mode="sketch"] .travel-timeline-content,
-.site-frame[data-site-mode="sketch"] .travel-entry-heading > span,
+.site-frame[data-site-mode="sketch"] .travel-entry-heading-actions > span,
 .site-frame[data-site-mode="sketch"] .travel-secondary-button,
 .site-frame[data-site-mode="sketch"] .travel-form-grid input,
 .site-frame[data-site-mode="sketch"] .travel-form-grid select,
