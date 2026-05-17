@@ -30,8 +30,10 @@ const Hero = () => {
           {[
             { name: 'About', section: 1 },
             { name: 'Experience', section: 2 },
-            { name: 'Photography', section: 3 },
-            { name: 'Contact', section: 4 }
+            { name: 'Education', section: 3 },
+            { name: 'Skills', section: 4 },
+            { name: 'Photography', section: 5 },
+            { name: 'Contact', section: 6 }
           ].map((item) => (
             <button
               key={item.name}

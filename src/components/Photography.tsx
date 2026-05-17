@@ -54,7 +54,7 @@ const Photography = () => {
   ];
 
   return (
-    <section id="photography" data-section="3" className="theme-section min-h-screen py-20 snap-start">
+    <section id="photography" data-section="5" className="theme-section min-h-screen py-20 snap-start">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <p className="theme-kicker mb-4">Frames</p>

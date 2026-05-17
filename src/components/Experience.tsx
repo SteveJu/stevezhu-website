@@ -1,5 +1,3 @@
-import SkillsRadarSection from './SkillsRadarSection';
-
 const Experience = () => {
   const experiences = [
     {
@@ -71,30 +69,6 @@ const Experience = () => {
         },
       ],
       tech: ['Python', 'OpenCV', 'Computer Vision', 'Data Analysis', 'Web Apps'],
-    },
-  ];
-
-  const education = [
-    {
-      school: 'Columbia University',
-      degree: 'Master of Science in Computer Science',
-      track: 'Machine Learning Track',
-      period: 'Sep 2023 - May 2025',
-      location: 'New York, NY',
-    },
-    {
-      school: 'Stanford University',
-      degree: 'Artificial Intelligence Graduate Program',
-      track: 'Non-degree Option',
-      period: 'Sep 2021 - Mar 2023',
-      location: 'Stanford, CA',
-    },
-    {
-      school: 'The Ohio State University',
-      degree: 'Bachelor of Science in Computer Science and Engineering',
-      track: 'Artificial Intelligence',
-      period: 'Aug 2016 - May 2021',
-      location: 'Columbus, OH',
     },
   ];
 
@@ -197,25 +171,6 @@ const Experience = () => {
           </div>
         </div>
 
-        <div className="mt-20">
-          <h3 className="theme-heading text-center mb-10">Education</h3>
-          <div className="grid gap-4 md:grid-cols-3">
-            {education.map((edu) => (
-              <div key={edu.school} className="theme-card p-6">
-                <div className="theme-muted text-sm font-medium">{edu.period}</div>
-                <div className="theme-card-title mt-3 text-lg">{edu.school}</div>
-                <div className="theme-list-item mt-2 text-sm leading-6">{edu.degree}</div>
-                <div className="theme-muted text-sm">{edu.track}</div>
-                <div className="theme-accent mt-4 text-sm font-medium">{edu.location}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-20">
-          <h3 className="theme-heading text-center mb-12">Technical Skills Overview</h3>
-          <SkillsRadarSection />
-        </div>
       </div>
     </section>
   );

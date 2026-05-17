@@ -3,6 +3,7 @@
 import { SiteModeContext } from '@/contexts/SiteModeContext';
 import { getSiteMode, getSiteModeLabel, type SiteMode } from '@/lib/siteMode';
 import { useEffect, useState } from 'react';
+import OwnerAccess from './OwnerAccess';
 
 const storageKey = 'stevezhu-site-mode';
 
@@ -52,6 +53,7 @@ const SiteModeFrame = ({ children }: { children: React.ReactNode }) => {
         className="site-frame snap-y snap-mandatory overflow-y-scroll h-screen"
       >
         {children}
+        <OwnerAccess />
         <a
           href="/Zhengqi_Zhu_Resume.pdf"
           download="Zhengqi_Zhu_Resume.pdf"

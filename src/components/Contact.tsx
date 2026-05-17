@@ -1,6 +1,6 @@
 const Contact = () => {
   return (
-    <section id="contact" data-section="4" className="theme-section min-h-screen flex items-center justify-center px-6 py-20 snap-start">
+    <section id="contact" data-section="6" className="theme-section min-h-screen flex items-center justify-center px-6 py-20 snap-start">
       <div className="max-w-4xl w-full text-center space-y-12">
         <p className="theme-kicker">Transmit Signal</p>
         <h2 className="theme-heading">
