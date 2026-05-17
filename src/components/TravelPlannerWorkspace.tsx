@@ -1138,8 +1138,12 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
                 <div className="travel-companion-popover" role="dialog" aria-label="以往同行人员">
                   <div className="travel-companion-popover-head">
                     <span>以往同行</span>
-                    <button type="button" onClick={() => setIsCompanionHistoryOpen(false)}>
-                      Close
+                    <button
+                      type="button"
+                      onClick={() => setIsCompanionHistoryOpen(false)}
+                      aria-label="关闭以往同行人员"
+                    >
+                      ×
                     </button>
                   </div>
                   <div className="travel-known-companions">

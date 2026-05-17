@@ -1446,16 +1446,30 @@ body {
 
 .travel-companion-popover {
   position: absolute;
-  left: 0.82rem;
-  right: 0.82rem;
-  top: calc(100% - 0.2rem);
-  z-index: 6;
+  left: calc(100% + 0.85rem);
+  right: auto;
+  top: 0;
+  z-index: 20;
   display: grid;
   gap: 0.75rem;
+  width: min(17rem, calc(100vw - 2rem));
   border: 1px solid var(--mode-line);
   background: var(--mode-surface-strong);
   padding: 0.85rem;
   box-shadow: var(--mode-shadow);
+}
+
+.travel-companion-popover::before {
+  content: "";
+  position: absolute;
+  left: -0.45rem;
+  top: 1.15rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-left: 1px solid var(--mode-line);
+  border-bottom: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  transform: rotate(45deg);
 }
 
 .travel-companion-popover-head {
@@ -1474,14 +1488,24 @@ body {
 }
 
 .travel-companion-popover-head button {
+  display: grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  place-items: center;
   border: 1px solid var(--mode-line);
   background: transparent;
   color: var(--mode-muted);
-  padding: 0.34rem 0.48rem;
-  font-size: 0.62rem;
+  padding: 0;
+  font-size: 1rem;
   font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  line-height: 1;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-companion-popover-head button:hover {
+  border-color: var(--mode-accent-2);
+  color: var(--mode-accent-2);
+  transform: translateY(-1px);
 }
 
 .travel-companion-add {
@@ -1995,6 +2019,17 @@ body {
 
   .travel-history-card strong {
     white-space: normal;
+  }
+
+  .travel-companion-popover {
+    left: 0;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    width: auto;
+  }
+
+  .travel-companion-popover::before {
+    display: none;
   }
 }
 
