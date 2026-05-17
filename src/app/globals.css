@@ -733,9 +733,11 @@ body {
 
 .travel-date-picker {
   position: relative;
+  cursor: pointer;
 }
 
 .travel-date-picker.is-disabled {
+  cursor: not-allowed;
   opacity: 0.48;
 }
 
@@ -808,11 +810,12 @@ body {
 
 .travel-native-date {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  width: 1px;
+  height: 1px;
   opacity: 0;
-  cursor: pointer;
+  pointer-events: none;
 }
 
 .travel-native-date:disabled {
@@ -1261,6 +1264,132 @@ body {
   text-align: left;
 }
 
+.travel-save-status {
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
+  color: var(--mode-muted);
+  padding: 0.62rem 0.7rem;
+}
+
+.travel-save-status span {
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.travel-save-status.is-saved {
+  border-color: color-mix(in srgb, var(--mode-accent) 58%, transparent);
+  color: var(--mode-accent);
+}
+
+.travel-save-status.is-error {
+  border-color: var(--mode-accent-2);
+  color: var(--mode-accent-2);
+}
+
+.travel-companion-panel {
+  display: grid;
+  gap: 0.75rem;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
+  padding: 0.82rem;
+}
+
+.travel-companion-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.travel-companion-heading span {
+  color: var(--mode-muted);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.travel-companion-heading strong {
+  color: var(--mode-accent);
+  font-family: var(--mode-font-display);
+}
+
+.travel-companion-chips,
+.travel-known-companions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.travel-companion-chips p {
+  color: var(--mode-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.travel-companion-chips button,
+.travel-known-companions button {
+  border: 1px solid var(--mode-line);
+  background: transparent;
+  color: var(--mode-muted);
+  padding: 0.38rem 0.52rem;
+  font-size: 0.74rem;
+  font-weight: 800;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.travel-companion-chips button {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+}
+
+.travel-known-companions button:hover,
+.travel-known-companions button.is-selected {
+  border-color: var(--mode-accent);
+  background: color-mix(in srgb, var(--mode-accent) 12%, transparent);
+  color: var(--mode-accent);
+  transform: translateY(-1px);
+}
+
+.travel-companion-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem;
+}
+
+.travel-companion-add input {
+  min-width: 0;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  color: var(--mode-ink);
+  padding: 0.62rem 0.65rem;
+  outline: none;
+}
+
+.travel-companion-add input:focus {
+  border-color: var(--mode-accent);
+}
+
+.travel-companion-add button {
+  border: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  color: var(--mode-ink);
+  padding: 0.62rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-companion-add button:hover {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+  transform: translateY(-1px);
+}
+
 .travel-preview-list {
   display: grid;
   gap: 0.65rem;
@@ -1328,6 +1457,11 @@ body {
 
 .site-frame[data-site-mode="cyber"] .travel-add-button,
 .site-frame[data-site-mode="cyber"] .travel-budget-total,
+.site-frame[data-site-mode="cyber"] .travel-companion-add button,
+.site-frame[data-site-mode="cyber"] .travel-companion-add input,
+.site-frame[data-site-mode="cyber"] .travel-companion-chips button,
+.site-frame[data-site-mode="cyber"] .travel-companion-panel,
+.site-frame[data-site-mode="cyber"] .travel-known-companions button,
 .site-frame[data-site-mode="cyber"] .travel-create-form input,
 .site-frame[data-site-mode="cyber"] .travel-date-trigger,
 .site-frame[data-site-mode="cyber"] .travel-date-nav button,
@@ -1339,6 +1473,7 @@ body {
 .site-frame[data-site-mode="cyber"] .travel-module-menu button,
 .site-frame[data-site-mode="cyber"] .travel-selected-date,
 .site-frame[data-site-mode="cyber"] .travel-preview-list div,
+.site-frame[data-site-mode="cyber"] .travel-save-status,
 .site-frame[data-site-mode="cyber"] .travel-timeline-empty,
 .site-frame[data-site-mode="cyber"] .travel-timeline-marker,
 .site-frame[data-site-mode="cyber"] .travel-timeline-content,
@@ -1353,6 +1488,11 @@ body {
 
 .site-frame[data-site-mode="sketch"] .travel-add-button,
 .site-frame[data-site-mode="sketch"] .travel-budget-total,
+.site-frame[data-site-mode="sketch"] .travel-companion-add button,
+.site-frame[data-site-mode="sketch"] .travel-companion-add input,
+.site-frame[data-site-mode="sketch"] .travel-companion-chips button,
+.site-frame[data-site-mode="sketch"] .travel-companion-panel,
+.site-frame[data-site-mode="sketch"] .travel-known-companions button,
 .site-frame[data-site-mode="sketch"] .travel-create-form input,
 .site-frame[data-site-mode="sketch"] .travel-date-trigger,
 .site-frame[data-site-mode="sketch"] .travel-date-nav button,
@@ -1364,6 +1504,7 @@ body {
 .site-frame[data-site-mode="sketch"] .travel-module-menu button,
 .site-frame[data-site-mode="sketch"] .travel-selected-date,
 .site-frame[data-site-mode="sketch"] .travel-preview-list div,
+.site-frame[data-site-mode="sketch"] .travel-save-status,
 .site-frame[data-site-mode="sketch"] .travel-timeline-empty,
 .site-frame[data-site-mode="sketch"] .travel-timeline-marker,
 .site-frame[data-site-mode="sketch"] .travel-timeline-content,

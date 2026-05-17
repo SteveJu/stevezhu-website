@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 type PlannerView = 'list' | 'editor';
 
@@ -11,6 +11,7 @@ type TravelRecord = {
   endDate: string;
   status: string;
   summary: string;
+  companions: string[];
 };
 
 type TravelField = {
@@ -39,7 +40,15 @@ type JellyCard = {
 
 type TravelFormValues = Record<string, Record<string, Record<string, string>>>;
 
+type PlannerPayload = {
+  travels: TravelRecord[];
+  timelineCards: Record<string, JellyCard[]>;
+  formValues: TravelFormValues;
+  knownCompanions: string[];
+};
+
 const initialTravels: TravelRecord[] = [];
+const companionStorageKey = 'stevezhu_travel_companions';
 
 const travelModules: TravelModule[] = [
   {
@@ -298,14 +307,38 @@ const DatePickerField = ({
   placeholder: string;
   disabled?: boolean;
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const openPicker = () => {
+    if (disabled) return;
+
+    const input = inputRef.current;
+    if (!input) return;
+
+    input.focus();
+    input.showPicker?.();
+  };
+
   return (
-    <div className={`travel-date-picker ${disabled ? 'is-disabled' : ''}`}>
+    <div
+      className={`travel-date-picker ${disabled ? 'is-disabled' : ''}`}
+      onClick={openPicker}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openPicker();
+        }
+      }}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+    >
       <div
         className={`travel-date-trigger ${value ? '' : 'is-empty'}`}
       >
         <span>{value ? formatDate(value) : placeholder}</span>
       </div>
       <input
+        ref={inputRef}
         className="travel-native-date"
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -314,6 +347,7 @@ const DatePickerField = ({
         onKeyDown={blockManualDateInput}
         onPaste={blockManualDatePaste}
         disabled={disabled}
+        tabIndex={-1}
       />
     </div>
   );
@@ -350,6 +384,29 @@ const sortJellies = (cards: JellyCard[], values: TravelFormValues[string] = {}) 
   });
 };
 
+const isPlannerPayload = (payload: unknown): payload is PlannerPayload => {
+  if (!payload || typeof payload !== 'object') return false;
+
+  const candidate = payload as Partial<PlannerPayload>;
+  return (
+    Array.isArray(candidate.travels) &&
+    candidate.timelineCards !== null &&
+    typeof candidate.timelineCards === 'object' &&
+    candidate.formValues !== null &&
+    typeof candidate.formValues === 'object' &&
+    Array.isArray(candidate.knownCompanions)
+  );
+};
+
+const getMaxNumericId = (ids: string[], prefix: string) => {
+  return ids.reduce((maxId, id) => {
+    if (!id.startsWith(prefix)) return maxId;
+
+    const numericId = Number.parseInt(id.slice(prefix.length), 10);
+    return Number.isFinite(numericId) ? Math.max(maxId, numericId) : maxId;
+  }, 0);
+};
+
 const TravelPlannerWorkspace = () => {
   const [view, setView] = useState<PlannerView>('list');
   const [travels, setTravels] = useState(initialTravels);
@@ -361,8 +418,126 @@ const TravelPlannerWorkspace = () => {
   const [isCreatingTravel, setIsCreatingTravel] = useState(false);
   const [newTravel, setNewTravel] = useState({ title: '', startDate: '', endDate: '' });
   const [selectedTravelDate, setSelectedTravelDate] = useState('');
+  const [knownCompanions, setKnownCompanions] = useState<string[]>([]);
+  const [newCompanionName, setNewCompanionName] = useState('');
+  const [isPlannerLoaded, setIsPlannerLoaded] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'loading' | 'saved' | 'saving' | 'error' | 'local'>('loading');
   const jellyIdCounter = useRef(0);
   const travelIdCounter = useRef(0);
+  const hasLoadedCompanions = useRef(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedCompanions = window.localStorage.getItem(companionStorageKey);
+      if (!storedCompanions) {
+        hasLoadedCompanions.current = true;
+        return;
+      }
+
+      const parsedCompanions = JSON.parse(storedCompanions);
+      if (Array.isArray(parsedCompanions)) {
+        setKnownCompanions(parsedCompanions.filter((name) => typeof name === 'string'));
+      }
+    } catch {
+      setKnownCompanions([]);
+    } finally {
+      hasLoadedCompanions.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedCompanions.current) return;
+    window.localStorage.setItem(companionStorageKey, JSON.stringify(knownCompanions));
+  }, [knownCompanions]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPlannerState = async () => {
+      try {
+        const response = await fetch('/api/travel-planner', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('Planner backend is not ready.');
+        }
+
+        const result = (await response.json()) as { payload?: unknown };
+
+        if (isMounted && isPlannerPayload(result.payload)) {
+          const loadedTravels = result.payload.travels.map((travel) => ({
+            ...travel,
+            companions: Array.isArray(travel.companions) ? travel.companions : [],
+          }));
+
+          setTravels(loadedTravels);
+          setTimelineCards(result.payload.timelineCards);
+          setFormValues(result.payload.formValues);
+          setKnownCompanions(result.payload.knownCompanions);
+          setActiveTravelId(loadedTravels[0]?.id ?? '');
+          setSelectedTravelDate(loadedTravels[0]?.startDate ?? '');
+          travelIdCounter.current = getMaxNumericId(loadedTravels.map((travel) => travel.id), 'trip-');
+          jellyIdCounter.current = getMaxNumericId(
+            Object.values(result.payload.timelineCards).flat().map((card) => card.id),
+            'jelly-',
+          );
+        }
+
+        if (isMounted) {
+          setSaveStatus('saved');
+        }
+      } catch {
+        if (isMounted) {
+          setSaveStatus('local');
+        }
+      } finally {
+        if (isMounted) {
+          setIsPlannerLoaded(true);
+        }
+      }
+    };
+
+    void loadPlannerState();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isPlannerLoaded) return;
+
+    if (saveTimer.current) {
+      clearTimeout(saveTimer.current);
+    }
+
+    saveTimer.current = setTimeout(() => {
+      const payload: PlannerPayload = {
+        travels,
+        timelineCards,
+        formValues,
+        knownCompanions,
+      };
+
+      setSaveStatus('saving');
+      void fetch('/api/travel-planner', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ payload }),
+      }).then((response) => {
+        setSaveStatus(response.ok ? 'saved' : 'error');
+      }).catch(() => {
+        setSaveStatus('error');
+      });
+    }, 650);
+
+    return () => {
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
+      }
+    };
+  }, [formValues, isPlannerLoaded, knownCompanions, timelineCards, travels]);
 
   const activeTravel = useMemo(() => {
     return travels.find((travel) => travel.id === activeTravelId) ?? travels[0];
@@ -395,6 +570,14 @@ const TravelPlannerWorkspace = () => {
     }, 0);
   }, [activeCards, activeTravel, formValues]);
 
+  const saveStatusText = {
+    loading: '正在连接后端',
+    saved: '已保存到 Supabase',
+    saving: '正在保存',
+    error: '保存失败',
+    local: '本地模式',
+  }[saveStatus];
+
   const openEditor = (travelId: string) => {
     const nextTravel = travels.find((travel) => travel.id === travelId);
     setActiveTravelId(travelId);
@@ -417,6 +600,7 @@ const TravelPlannerWorkspace = () => {
       endDate: newTravel.endDate,
       status: '新建',
       summary: `${formatDate(newTravel.startDate)} - ${formatDate(newTravel.endDate)}`,
+      companions: [],
     };
 
     setTravels((currentTravels) => [nextTravel, ...currentTravels]);
@@ -425,6 +609,55 @@ const TravelPlannerWorkspace = () => {
     setNewTravel({ title: '', startDate: '', endDate: '' });
     setIsCreatingTravel(false);
     setView('editor');
+  };
+
+  const addCompanionToPool = (name: string) => {
+    const normalizedName = name.trim();
+    if (!normalizedName) return '';
+
+    setKnownCompanions((currentCompanions) => {
+      if (currentCompanions.some((companion) => companion.toLowerCase() === normalizedName.toLowerCase())) {
+        return currentCompanions;
+      }
+
+      return [...currentCompanions, normalizedName].sort((a, b) => a.localeCompare(b));
+    });
+
+    return normalizedName;
+  };
+
+  const toggleTravelCompanion = (travelId: string, companionName: string) => {
+    setTravels((currentTravels) =>
+      currentTravels.map((travel) => {
+        if (travel.id !== travelId) return travel;
+
+        const hasCompanion = travel.companions.includes(companionName);
+        return {
+          ...travel,
+          companions: hasCompanion
+            ? travel.companions.filter((name) => name !== companionName)
+            : [...travel.companions, companionName],
+        };
+      }),
+    );
+  };
+
+  const addCompanionToActiveTravel = () => {
+    if (!activeTravel) return;
+
+    const normalizedName = addCompanionToPool(newCompanionName);
+    if (!normalizedName) return;
+
+    setTravels((currentTravels) =>
+      currentTravels.map((travel) => {
+        if (travel.id !== activeTravel.id || travel.companions.includes(normalizedName)) return travel;
+        return {
+          ...travel,
+          companions: [...travel.companions, normalizedName],
+        };
+      }),
+    );
+    setNewCompanionName('');
   };
 
   const startDraftJelly = (moduleId: TravelModule['id']) => {
@@ -753,9 +986,71 @@ const TravelPlannerWorkspace = () => {
 
           <aside className="theme-card travel-preview-panel">
             <p className="travel-panel-label">日期导航</p>
+            <div className={`travel-save-status is-${saveStatus}`}>
+              <span>{saveStatusText}</span>
+            </div>
             <div className="travel-budget-total" aria-label="实时预算总计">
               <span>实时预算</span>
               <strong>{formatMoney(activeBudget)}</strong>
+            </div>
+
+            <div className="travel-companion-panel">
+              <div className="travel-companion-heading">
+                <span>同行人员</span>
+                <strong>{activeTravel?.companions?.length ?? 0}</strong>
+              </div>
+
+              <div className="travel-companion-chips">
+                {(activeTravel?.companions ?? []).length > 0 ? (
+                  activeTravel?.companions.map((companion) => (
+                    <button
+                      key={companion}
+                      type="button"
+                      onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
+                    >
+                      {companion}
+                    </button>
+                  ))
+                ) : (
+                  <p>还没有添加同行人员</p>
+                )}
+              </div>
+
+              {knownCompanions.length > 0 && (
+                <div className="travel-known-companions">
+                  {knownCompanions.map((companion) => {
+                    const isSelected = activeTravel?.companions?.includes(companion) ?? false;
+
+                    return (
+                      <button
+                        key={companion}
+                        type="button"
+                        className={isSelected ? 'is-selected' : ''}
+                        onClick={() => activeTravel && toggleTravelCompanion(activeTravel.id, companion)}
+                      >
+                        {companion}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="travel-companion-add">
+                <input
+                  value={newCompanionName}
+                  onChange={(event) => setNewCompanionName(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      addCompanionToActiveTravel();
+                    }
+                  }}
+                  placeholder="添加名字"
+                />
+                <button type="button" onClick={addCompanionToActiveTravel}>
+                  Add
+                </button>
+              </div>
             </div>
 
             <div className="travel-date-nav">
@@ -848,6 +1143,9 @@ const TravelPlannerWorkspace = () => {
                 <span>{travel.status}</span>
                 <h2>{travel.title}</h2>
                 <p>{travel.summary}</p>
+                {travel.companions.length > 0 && (
+                  <p>同行：{travel.companions.join(' / ')}</p>
+                )}
               </div>
               <strong>{formatDate(travel.startDate)} - {formatDate(travel.endDate)}</strong>
             </button>

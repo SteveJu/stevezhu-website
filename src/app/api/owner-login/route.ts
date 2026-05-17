@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-
-const ownerCookieName = 'stevezhu_owner_mode';
+import { ownerCookieName } from '@/lib/ownerAuth';
 
 export async function POST(request: Request) {
   const configuredPasscode = process.env.OWNER_PASSCODE;
