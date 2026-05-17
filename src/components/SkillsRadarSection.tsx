@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const SkillsRadar = dynamic(() => import('./SkillsRadar'), {
   ssr: false,
-  loading: () => <div className="h-96 bg-gray-900 rounded-lg" aria-hidden="true" />,
+  loading: () => <div className="theme-card h-96" aria-hidden="true" />,
 });
 
 const SkillsRadarSection = () => {
@@ -32,7 +32,7 @@ const SkillsRadarSection = () => {
 
   return (
     <div ref={containerRef} className="max-w-2xl mx-auto">
-      {shouldLoad ? <SkillsRadar /> : <div className="h-96 bg-gray-900 rounded-lg" aria-hidden="true" />}
+      {shouldLoad ? <SkillsRadar /> : <div className="theme-card h-96" aria-hidden="true" />}
     </div>
   );
 };

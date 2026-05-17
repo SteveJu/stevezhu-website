@@ -1,5 +1,6 @@
 'use client';
 
+import { useSiteMode } from '@/contexts/SiteModeContext';
 import { useEffect, useMemo, useRef } from 'react';
 import { Chart, ChartConfiguration, RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js';
 
@@ -7,8 +8,39 @@ import { Chart, ChartConfiguration, RadarController, RadialLinearScale, PointEle
 Chart.register(RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
 
 const SkillsRadar = () => {
+  const { mode } = useSiteMode();
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
+
+  const theme = useMemo(() => {
+    if (mode === 'cyber') {
+      return {
+        label: 'Cybernetic Skill Signal',
+        fill: 'rgba(38, 255, 230, 0.16)',
+        border: 'rgb(38, 255, 230)',
+        point: 'rgb(255, 63, 215)',
+        pointBorder: 'rgb(234, 255, 255)',
+        grid: 'rgba(38, 255, 230, 0.18)',
+        angle: 'rgba(255, 63, 215, 0.14)',
+        text: 'rgba(234, 255, 255, 0.92)',
+        tick: 'rgba(234, 255, 255, 0.46)',
+        tooltipBg: 'rgba(3, 8, 18, 0.92)',
+      };
+    }
+
+    return {
+      label: 'Hand-drawn Skill Map',
+      fill: 'rgba(23, 20, 16, 0.08)',
+      border: 'rgb(23, 20, 16)',
+      point: 'rgb(23, 20, 16)',
+      pointBorder: 'rgb(247, 241, 229)',
+      grid: 'rgba(23, 20, 16, 0.2)',
+      angle: 'rgba(23, 20, 16, 0.18)',
+      text: 'rgba(23, 20, 16, 0.9)',
+      tick: 'rgba(23, 20, 16, 0.5)',
+      tooltipBg: 'rgba(247, 241, 229, 0.96)',
+    };
+  }, [mode]);
 
   const skillsData = useMemo(() => ({
     labels: [
@@ -24,19 +56,20 @@ const SkillsRadar = () => {
       'System Design'
     ],
     datasets: [{
-      label: 'Technical Skills',
+      label: theme.label,
       data: [9, 9, 8, 7, 9, 9, 10, 8, 7, 8],
       fill: true,
-      backgroundColor: 'rgba(59, 130, 246, 0.2)',
-      borderColor: 'rgb(59, 130, 246)',
-      pointBackgroundColor: 'rgb(59, 130, 246)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgb(59, 130, 246)',
-      borderWidth: 2,
-      pointRadius: 4,
+      backgroundColor: theme.fill,
+      borderColor: theme.border,
+      pointBackgroundColor: theme.point,
+      pointBorderColor: theme.pointBorder,
+      pointHoverBackgroundColor: theme.pointBorder,
+      pointHoverBorderColor: theme.point,
+      borderWidth: mode === 'cyber' ? 2 : 2.5,
+      pointRadius: mode === 'cyber' ? 4 : 3.5,
+      pointHoverRadius: 6,
     }]
-  }), []);
+  }), [mode, theme]);
 
   const options = useMemo<ChartConfiguration<'radar'>['options']>(() => ({
     responsive: true,
@@ -46,19 +79,24 @@ const SkillsRadar = () => {
         beginAtZero: true,
         max: 10,
         angleLines: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: theme.angle
         },
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
+          color: theme.grid,
+          circular: mode === 'sketch',
         },
         pointLabels: {
-          color: '#fff',
+          color: theme.text,
           font: {
-            size: 12
+            size: 12,
+            family: mode === 'cyber'
+              ? 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
+              : 'Georgia, Times New Roman, serif',
+            weight: mode === 'cyber' ? 'bold' : 'normal',
           }
         },
         ticks: {
-          color: 'rgba(255, 255, 255, 0.5)',
+          color: theme.tick,
           backdropColor: 'transparent',
           stepSize: 2
         }
@@ -69,9 +107,11 @@ const SkillsRadar = () => {
         display: false
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
+        backgroundColor: theme.tooltipBg,
+        titleColor: theme.text,
+        bodyColor: theme.text,
+        borderColor: theme.border,
+        borderWidth: 1,
         callbacks: {
           label: function(context) {
             return `${context.label}: ${context.parsed.r}/10`;
@@ -79,7 +119,7 @@ const SkillsRadar = () => {
         }
       }
     }
-  }), []);
+  }), [mode, theme]);
 
   useEffect(() => {
     if (chartRef.current) {
@@ -106,8 +146,11 @@ const SkillsRadar = () => {
   }, [options, skillsData]);
 
   return (
-    <div className="bg-gray-900 rounded-lg p-6 h-96">
-      <h3 className="text-xl font-semibold text-white mb-4 text-center">Technical Skills</h3>
+    <div className="theme-card theme-radar-card p-6 h-96">
+      <div className="flex items-baseline justify-between gap-4 mb-4">
+        <h3 className="theme-card-title text-xl">Technical Skills</h3>
+        <span className="theme-radar-mode">{mode === 'cyber' ? 'signal map' : 'sketch map'}</span>
+      </div>
       <div className="relative h-80">
         <canvas ref={chartRef}></canvas>
       </div>
