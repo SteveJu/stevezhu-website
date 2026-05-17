@@ -60,11 +60,8 @@ const SiteModeFrame = ({ children }: { children: React.ReactNode }) => {
           className="theme-floating-resume"
           aria-label="Download resume"
         >
-          <span>Resume</span>
+          <span>Get Resume PDF</span>
         </a>
-        <div className="theme-mode-badge" aria-label={`Current visual mode: ${getSiteModeLabel(mode)}`}>
-          {isManual ? 'Manual' : 'Auto'} / {getSiteModeLabel(mode)}
-        </div>
       </main>
     </SiteModeContext.Provider>
   );
