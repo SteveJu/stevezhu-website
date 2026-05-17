@@ -699,6 +699,126 @@ body {
   line-height: 1.7;
 }
 
+.travel-create-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 0.8fr)) auto;
+  gap: 1rem;
+  align-items: end;
+  padding: 1.2rem;
+}
+
+.travel-create-form label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.travel-create-form label span {
+  color: var(--mode-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.travel-create-form input {
+  width: 100%;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  color: var(--mode-ink);
+  padding: 0.8rem 0.9rem;
+  outline: none;
+}
+
+.travel-create-form input:focus {
+  border-color: var(--mode-accent);
+}
+
+.travel-date-picker {
+  position: relative;
+}
+
+.travel-date-picker.is-disabled {
+  opacity: 0.48;
+}
+
+.travel-date-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  color: var(--mode-ink);
+  padding: 0.8rem 0.9rem;
+  text-align: left;
+  outline: none;
+  pointer-events: none;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.travel-date-trigger::after {
+  content: "";
+  width: 0.82rem;
+  height: 0.82rem;
+  flex: none;
+  border: 1.8px solid currentColor;
+  border-top-width: 3px;
+  opacity: 0.72;
+}
+
+.travel-date-picker:hover .travel-date-trigger,
+.travel-date-picker:focus-within .travel-date-trigger {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+}
+
+.travel-date-trigger.is-empty {
+  color: var(--mode-muted);
+}
+
+.site-frame[data-site-mode="cyber"] .travel-date-trigger {
+  border-color: color-mix(in srgb, var(--mode-accent) 56%, transparent);
+  background:
+    linear-gradient(135deg, rgba(38, 255, 230, 0.12), rgba(255, 63, 215, 0.08)),
+    rgba(4, 15, 28, 0.9);
+  color: #f4ffff;
+  box-shadow:
+    inset 0 0 0 1px rgba(234, 255, 255, 0.08),
+    0 0 18px rgba(38, 255, 230, 0.1);
+}
+
+.site-frame[data-site-mode="cyber"] .travel-date-trigger::after {
+  color: var(--mode-accent);
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(38, 255, 230, 0.68));
+}
+
+.site-frame[data-site-mode="cyber"] .travel-date-trigger.is-empty {
+  color: rgba(234, 255, 255, 0.78);
+}
+
+.site-frame[data-site-mode="cyber"] .travel-date-picker:hover .travel-date-trigger,
+.site-frame[data-site-mode="cyber"] .travel-date-picker:focus-within .travel-date-trigger {
+  border-color: var(--mode-accent);
+  background:
+    linear-gradient(135deg, rgba(38, 255, 230, 0.18), rgba(255, 63, 215, 0.12)),
+    rgba(4, 15, 28, 0.96);
+  box-shadow:
+    inset 0 0 0 1px rgba(234, 255, 255, 0.12),
+    0 0 24px rgba(38, 255, 230, 0.18);
+}
+
+.travel-native-date {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.travel-native-date:disabled {
+  cursor: not-allowed;
+}
+
 .travel-editor-actions {
   display: flex;
   align-items: flex-start;
@@ -735,13 +855,15 @@ body {
 
 .travel-editor-grid {
   display: grid;
-  grid-template-columns: minmax(14rem, 0.38fr) minmax(0, 1fr);
+  grid-template-columns: minmax(11rem, 0.28fr) minmax(0, 1fr) minmax(11rem, 0.28fr);
   gap: 1rem;
   align-items: start;
 }
 
 .travel-module-menu,
-.travel-entry-panel {
+.travel-entry-panel,
+.travel-timeline-panel,
+.travel-preview-panel {
   padding: clamp(1.1rem, 3vw, 1.5rem);
 }
 
@@ -750,14 +872,39 @@ body {
   gap: 0.7rem;
 }
 
+.travel-selected-date {
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface-strong) 86%, transparent);
+  color: var(--mode-ink);
+  padding: 0.75rem 0.8rem;
+}
+
+.travel-selected-date span {
+  display: block;
+  color: var(--mode-muted);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.travel-selected-date strong {
+  display: block;
+  margin-top: 0.28rem;
+  color: var(--mode-accent);
+  font-family: var(--mode-font-display);
+  font-size: 1.12rem;
+  line-height: 1;
+}
+
 .travel-module-menu button {
-  display: grid;
-  gap: 0.35rem;
+  display: flex;
+  align-items: center;
   width: 100%;
   border: 1px solid var(--mode-line);
   background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
   color: var(--mode-ink);
-  padding: 0.9rem;
+  padding: 0.78rem;
   text-align: left;
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
@@ -791,12 +938,6 @@ body {
   height: 1.05rem;
 }
 
-.travel-module-menu button small {
-  color: var(--mode-muted);
-  font-size: 0.76rem;
-  line-height: 1.5;
-}
-
 .travel-entry-heading {
   display: flex;
   align-items: flex-start;
@@ -812,6 +953,200 @@ body {
   font-size: 0.72rem;
   font-weight: 900;
   white-space: nowrap;
+}
+
+.travel-timeline-list {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+}
+
+.travel-timeline-list::before {
+  content: "";
+  position: absolute;
+  bottom: 0.5rem;
+  left: 1.05rem;
+  top: 0.5rem;
+  width: 1px;
+  background: var(--mode-line);
+}
+
+.travel-timeline-empty {
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
+  padding: 1rem;
+}
+
+.travel-timeline-empty span {
+  color: var(--mode-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.travel-timeline-empty p {
+  margin-top: 0.6rem;
+  color: var(--mode-muted);
+  line-height: 1.65;
+}
+
+.travel-timeline-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 2.1rem minmax(0, 1fr);
+  gap: 0.9rem;
+}
+
+.travel-timeline-marker {
+  display: grid;
+  width: 2.1rem;
+  height: 2.1rem;
+  place-items: center;
+  border: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  color: var(--mode-accent);
+  font-family: var(--mode-font-display);
+  font-weight: 900;
+}
+
+.travel-timeline-content {
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 84%, transparent);
+  padding: 1rem;
+}
+
+.travel-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.travel-card-heading > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.travel-card-heading > div span {
+  display: block;
+  color: var(--mode-muted);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.travel-card-heading h3 {
+  color: var(--mode-ink);
+  font-family: var(--mode-font-display);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.travel-jelly-delete {
+  border: 1px solid var(--mode-line);
+  background: transparent;
+  color: var(--mode-muted);
+  padding: 0.45rem 0.58rem;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-jelly-delete:hover {
+  border-color: var(--mode-accent-2);
+  color: var(--mode-accent-2);
+  transform: translateY(-1px);
+}
+
+.travel-jelly-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: flex-end;
+}
+
+.travel-jelly-actions button {
+  border: 1px solid var(--mode-line);
+  background: transparent;
+  color: var(--mode-muted);
+  padding: 0.45rem 0.58rem;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-jelly-actions button:hover {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+  transform: translateY(-1px);
+}
+
+.travel-jelly-summary {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.travel-jelly-summary > strong {
+  color: var(--mode-ink);
+  font-family: var(--mode-font-display);
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1;
+}
+
+.travel-jelly-summary div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.travel-jelly-summary div span {
+  border: 1px solid var(--mode-line);
+  color: var(--mode-muted);
+  padding: 0.35rem 0.55rem;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.travel-jelly-summary p {
+  color: var(--mode-muted);
+  line-height: 1.7;
+}
+
+.travel-timeline-card.is-draft .travel-timeline-marker,
+.travel-timeline-card.is-draft .travel-timeline-content {
+  border-color: var(--mode-accent);
+}
+
+.travel-day-section {
+  display: grid;
+  gap: 0.8rem;
+  scroll-margin-top: 6rem;
+}
+
+.travel-day-heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.travel-day-heading span {
+  border: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  color: var(--mode-accent);
+  padding: 0.38rem 0.62rem;
+  font-family: var(--mode-font-display);
+  font-weight: 900;
 }
 
 .travel-form-grid {
@@ -836,6 +1171,7 @@ body {
 }
 
 .travel-form-grid input,
+.travel-form-grid select,
 .travel-form-grid textarea {
   width: 100%;
   border: 1px solid var(--mode-line);
@@ -845,11 +1181,47 @@ body {
   outline: none;
 }
 
+.travel-form-grid select {
+  appearance: none;
+}
+
+.travel-form-grid label.is-disabled {
+  opacity: 0.48;
+}
+
+.travel-form-grid input:disabled,
+.travel-form-grid select:disabled,
+.travel-form-grid textarea:disabled {
+  cursor: not-allowed;
+}
+
+.travel-checkbox-field {
+  display: flex;
+  min-height: 2.95rem;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  color: var(--mode-ink);
+  padding: 0.8rem 0.9rem;
+}
+
+.travel-form-grid .travel-checkbox-field input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--mode-accent);
+}
+
+.travel-form-grid .travel-checkbox-field span {
+  color: var(--mode-ink);
+}
+
 .travel-form-grid textarea {
   resize: vertical;
 }
 
 .travel-form-grid input:focus,
+.travel-form-grid select:focus,
 .travel-form-grid textarea:focus {
   border-color: var(--mode-accent);
 }
@@ -879,24 +1251,127 @@ body {
   transform: translateY(-2px);
 }
 
+.travel-preview-panel {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.travel-preview-panel .travel-budget-total {
+  min-width: 0;
+  text-align: left;
+}
+
+.travel-preview-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.travel-preview-list div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
+  padding: 0.7rem;
+}
+
+.travel-preview-list p {
+  color: var(--mode-ink);
+  font-weight: 800;
+}
+
+.travel-preview-list strong {
+  color: var(--mode-accent);
+  font-family: var(--mode-font-display);
+}
+
+.travel-date-nav {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.travel-date-nav button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
+  color: var(--mode-ink);
+  padding: 0.72rem 0.78rem;
+  text-align: left;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.travel-date-nav button:hover {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+  transform: translateX(3px);
+}
+
+.travel-date-nav button.is-selected {
+  border-color: var(--mode-accent);
+  background: color-mix(in srgb, var(--mode-accent) 14%, var(--mode-surface-strong));
+  color: var(--mode-accent);
+}
+
+.travel-date-nav span {
+  font-family: var(--mode-font-display);
+  font-weight: 900;
+}
+
+.travel-date-nav strong {
+  color: var(--mode-accent);
+  font-family: var(--mode-font-display);
+}
+
 .site-frame[data-site-mode="cyber"] .travel-add-button,
 .site-frame[data-site-mode="cyber"] .travel-budget-total,
+.site-frame[data-site-mode="cyber"] .travel-create-form input,
+.site-frame[data-site-mode="cyber"] .travel-date-trigger,
+.site-frame[data-site-mode="cyber"] .travel-date-nav button,
+.site-frame[data-site-mode="cyber"] .travel-day-heading span,
+.site-frame[data-site-mode="cyber"] .travel-jelly-actions button,
+.site-frame[data-site-mode="cyber"] .travel-jelly-delete,
+.site-frame[data-site-mode="cyber"] .travel-jelly-summary div span,
 .site-frame[data-site-mode="cyber"] .travel-module-icon,
 .site-frame[data-site-mode="cyber"] .travel-module-menu button,
+.site-frame[data-site-mode="cyber"] .travel-selected-date,
+.site-frame[data-site-mode="cyber"] .travel-preview-list div,
+.site-frame[data-site-mode="cyber"] .travel-timeline-empty,
+.site-frame[data-site-mode="cyber"] .travel-timeline-marker,
+.site-frame[data-site-mode="cyber"] .travel-timeline-content,
 .site-frame[data-site-mode="cyber"] .travel-entry-heading > span,
 .site-frame[data-site-mode="cyber"] .travel-secondary-button,
 .site-frame[data-site-mode="cyber"] .travel-form-grid input,
+.site-frame[data-site-mode="cyber"] .travel-form-grid select,
+.site-frame[data-site-mode="cyber"] .travel-checkbox-field,
 .site-frame[data-site-mode="cyber"] .travel-form-grid textarea {
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
 
 .site-frame[data-site-mode="sketch"] .travel-add-button,
 .site-frame[data-site-mode="sketch"] .travel-budget-total,
+.site-frame[data-site-mode="sketch"] .travel-create-form input,
+.site-frame[data-site-mode="sketch"] .travel-date-trigger,
+.site-frame[data-site-mode="sketch"] .travel-date-nav button,
+.site-frame[data-site-mode="sketch"] .travel-day-heading span,
+.site-frame[data-site-mode="sketch"] .travel-jelly-actions button,
+.site-frame[data-site-mode="sketch"] .travel-jelly-delete,
+.site-frame[data-site-mode="sketch"] .travel-jelly-summary div span,
 .site-frame[data-site-mode="sketch"] .travel-module-icon,
 .site-frame[data-site-mode="sketch"] .travel-module-menu button,
+.site-frame[data-site-mode="sketch"] .travel-selected-date,
+.site-frame[data-site-mode="sketch"] .travel-preview-list div,
+.site-frame[data-site-mode="sketch"] .travel-timeline-empty,
+.site-frame[data-site-mode="sketch"] .travel-timeline-marker,
+.site-frame[data-site-mode="sketch"] .travel-timeline-content,
 .site-frame[data-site-mode="sketch"] .travel-entry-heading > span,
 .site-frame[data-site-mode="sketch"] .travel-secondary-button,
 .site-frame[data-site-mode="sketch"] .travel-form-grid input,
+.site-frame[data-site-mode="sketch"] .travel-form-grid select,
+.site-frame[data-site-mode="sketch"] .travel-checkbox-field,
 .site-frame[data-site-mode="sketch"] .travel-form-grid textarea {
   border: 1.6px solid var(--mode-ink);
   border-radius: 18px 14px 22px 16px / 14px 22px 16px 18px;
@@ -1232,6 +1707,7 @@ body {
 
   .travel-history-card,
   .travel-editor-grid,
+  .travel-create-form,
   .travel-form-grid {
     grid-template-columns: 1fr;
   }

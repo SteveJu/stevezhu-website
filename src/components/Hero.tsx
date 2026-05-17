@@ -22,7 +22,7 @@ const Hero = () => {
         </div>
 
         <h1 className="theme-title max-w-5xl">
-          AI Product Engineer.
+          ML Engineer.
           <span> Software Engineer.</span>
         </h1>
 
