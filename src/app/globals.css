@@ -1703,6 +1703,14 @@ body {
   background: rgba(4, 15, 28, 0.98);
 }
 
+.site-frame[data-site-mode="sketch"] .travel-companion-popover {
+  background: #f7f1e5;
+}
+
+.site-frame[data-site-mode="sketch"] .travel-companion-popover::before {
+  background: #f7f1e5;
+}
+
 .site-frame[data-site-mode="sketch"] .travel-date-nav button.is-selected {
   border-color: var(--mode-accent-2);
   background: color-mix(in srgb, var(--mode-accent-2) 18%, transparent);
