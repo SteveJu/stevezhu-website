@@ -1265,7 +1265,6 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
                     {dayCards.length === 0 && !shouldRenderDraft ? (
                       <div className="travel-timeline-empty">
                         <span>这一天还没有果冻</span>
-                        <p>从左侧添加一个项目，保存后会按开始时间排到这里。</p>
                       </div>
                     ) : (
                       dayCards.map((card, index) => renderJelly(card, index))
