@@ -52,6 +52,14 @@ const SiteModeFrame = ({ children }: { children: React.ReactNode }) => {
         className="site-frame snap-y snap-mandatory overflow-y-scroll h-screen"
       >
         {children}
+        <a
+          href="/Zhengqi_Zhu_Resume.pdf"
+          download="Zhengqi_Zhu_Resume.pdf"
+          className="theme-floating-resume"
+          aria-label="Download resume"
+        >
+          <span>Resume</span>
+        </a>
         <div className="theme-mode-badge" aria-label={`Current visual mode: ${getSiteModeLabel(mode)}`}>
           {isManual ? 'Manual' : 'Auto'} / {getSiteModeLabel(mode)}
         </div>
