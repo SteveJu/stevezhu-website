@@ -22,15 +22,10 @@ const Hero = () => {
         </div>
 
         <h1 className="theme-title max-w-5xl">
-          Trust systems engineer.
-          <span> Human eye behind the lens.</span>
+          AI Product Engineer.
+          <span> Software Engineer.</span>
         </h1>
 
-        <p className="theme-copy mt-8 max-w-2xl">
-          Software engineer at Meta building ML-powered content safety systems at Instagram scale,
-          with a parallel life in photography and visual storytelling.
-        </p>
-        
         <div className="theme-actions flex flex-wrap gap-3 mt-10">
           {[
             { name: 'About', section: 1 },
@@ -53,11 +48,6 @@ const Hero = () => {
           ))}
         </div>
 
-        <div className="theme-metrics mt-14">
-          <div><strong>108M+</strong><span>users protected</span></div>
-          <div><strong>1.5T+</strong><span>daily signals</span></div>
-          <div><strong>96%</strong><span>detection precision</span></div>
-        </div>
       </div>
     </section>
   );
