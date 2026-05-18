@@ -1814,6 +1814,10 @@ body {
   border-radius: 999px 820px 900px 760px / 760px 920px 740px 880px;
 }
 
+.site-frame[data-site-mode="sketch"] .travel-companion-history-trigger {
+  background: #f7f1e5;
+}
+
 .site-frame[data-site-mode="sketch"] .theme-nav-link:hover,
 .site-frame[data-site-mode="sketch"] .theme-nav-link.is-active {
   color: var(--mode-ink);
