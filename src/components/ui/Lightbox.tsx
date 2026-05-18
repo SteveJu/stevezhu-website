@@ -48,12 +48,8 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10"
-      >
+    <div className="photo-lightbox">
+      <button onClick={onClose} className="photo-lightbox-close" aria-label="Close photo">
         ✕
       </button>
 
@@ -61,7 +57,8 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
       {currentIndex > 0 && (
         <button
           onClick={onPrev}
-          className="absolute left-4 text-white text-3xl hover:text-gray-300"
+          className="photo-lightbox-nav is-prev"
+          aria-label="Previous photo"
         >
           ‹
         </button>
@@ -71,27 +68,25 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
       {currentIndex < images.length - 1 && (
         <button
           onClick={onNext}
-          className="absolute right-4 text-white text-3xl hover:text-gray-300"
+          className="photo-lightbox-nav is-next"
+          aria-label="Next photo"
         >
           ›
         </button>
       )}
 
-      {/* Image */}
-      <div className="relative max-w-[90vw] max-h-[90vh]">
+      <div className="photo-lightbox-image">
         <Image
           src={images[currentIndex]}
           alt={`Photo ${currentIndex + 1}`}
-          width={1200}
-          height={900}
-          sizes="90vw"
+          fill
+          sizes="100vw"
           unoptimized
-          className="max-w-full max-h-full object-contain"
+          className="object-contain"
         />
       </div>
 
-      {/* Image counter */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white">
+      <div className="photo-lightbox-counter">
         {currentIndex + 1} / {images.length}
       </div>
     </div>
