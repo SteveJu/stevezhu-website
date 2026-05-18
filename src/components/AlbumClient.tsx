@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import Lightbox from '@/components/ui/Lightbox';
 
 interface AlbumClientProps {
   album: {
@@ -15,25 +14,12 @@ interface AlbumClientProps {
 }
 
 const AlbumClient = ({ album }: AlbumClientProps) => {
-  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const selectedPhoto = album.photos[currentImageIndex];
+  const photoCount = album.photos.length;
 
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
-    setLightboxOpen(true);
-  };
-
-  const closeLightbox = () => setLightboxOpen(false);
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev < album.photos.length - 1 ? prev + 1 : prev
-    );
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : prev));
-  };
+  const goPrev = () => setCurrentImageIndex((index) => (index > 0 ? index - 1 : photoCount - 1));
+  const goNext = () => setCurrentImageIndex((index) => (index < photoCount - 1 ? index + 1 : 0));
 
   return (
     <main className="photo-album-page">
@@ -56,40 +42,65 @@ const AlbumClient = ({ album }: AlbumClientProps) => {
         </div>
 
         {album.photos.length > 0 ? (
-          <div className="photo-album-grid">
-            {album.photos.map((photo, index) => (
-              <button
-                key={photo}
-                type="button"
-                className="photo-album-tile"
-                onClick={() => openLightbox(index)}
-                aria-label={`Open ${album.title} photo ${index + 1}`}
-              >
+          <section className="photo-album-viewer" aria-label={`${album.title} photos`}>
+            <div className="photo-album-info">
+              <span>Selected Frame</span>
+              <strong>
+                {String(currentImageIndex + 1).padStart(2, '0')}
+                <small>/ {String(photoCount).padStart(2, '0')}</small>
+              </strong>
+              <div className="photo-album-actions" aria-label="Photo navigation">
+                <button type="button" onClick={goPrev}>Prev</button>
+                <button type="button" onClick={goNext}>Next</button>
+              </div>
+              {selectedPhoto && (
+                <a href={selectedPhoto} target="_blank" rel="noreferrer">Open original</a>
+              )}
+            </div>
+
+            <div className="photo-album-feature">
+              {selectedPhoto && (
                 <Image
-                  src={photo}
-                  alt={`${album.title} photo ${index + 1}`}
+                  key={selectedPhoto}
+                  src={selectedPhoto}
+                  alt={`${album.title} photo ${currentImageIndex + 1}`}
                   fill
-                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 72vw, 100vw"
+                  priority
                   unoptimized
-                  className="object-cover hover:scale-105 transition-transform duration-500"
+                  className="object-contain"
                 />
-              </button>
-            ))}
-          </div>
+              )}
+            </div>
+
+            <div className="photo-album-strip" role="list" aria-label="Select photo">
+              {album.photos.map((photo, index) => (
+                <button
+                  key={photo}
+                  type="button"
+                  className={`photo-album-thumb ${index === currentImageIndex ? 'is-active' : ''}`}
+                  onClick={() => setCurrentImageIndex(index)}
+                  aria-label={`Show ${album.title} photo ${index + 1}`}
+                  aria-pressed={index === currentImageIndex}
+                >
+                  <Image
+                    src={photo}
+                    alt={`${album.title} thumbnail ${index + 1}`}
+                    fill
+                    sizes="8rem"
+                    unoptimized
+                    className="object-cover"
+                  />
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                </button>
+              ))}
+            </div>
+          </section>
         ) : (
           <div className="photo-album-empty">
             <span>No photos published yet</span>
           </div>
         )}
-
-        <Lightbox
-          isOpen={lightboxOpen}
-          onClose={closeLightbox}
-          images={album.photos}
-          currentIndex={currentImageIndex}
-          onNext={nextImage}
-          onPrev={prevImage}
-        />
       </div>
     </main>
   );
