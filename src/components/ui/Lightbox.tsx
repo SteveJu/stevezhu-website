@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface LightboxProps {
   isOpen: boolean;
@@ -80,10 +81,10 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
     };
   }, [isOpen, onClose, onNext, onPrev]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !activeImage || typeof document === 'undefined') return null;
 
-  return (
-    <div className="photo-lightbox">
+  return createPortal(
+    <div className="photo-lightbox" role="dialog" aria-modal="true">
       <button onClick={onClose} className="photo-lightbox-close" aria-label="Close photo">
         ✕
       </button>
@@ -121,7 +122,8 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
       <div className="photo-lightbox-counter">
         {currentIndex + 1} / {images.length}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
