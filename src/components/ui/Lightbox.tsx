@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface LightboxProps {
   isOpen: boolean;
@@ -11,7 +11,43 @@ interface LightboxProps {
   onPrev: () => void;
 }
 
+interface LightboxImageProps {
+  src: string;
+  alt: string;
+}
+
+const LightboxImage = ({ src, alt }: LightboxImageProps) => {
+  const [imageState, setImageState] = useState<'loading' | 'loaded' | 'error'>('loading');
+
+  return (
+    <>
+      {imageState === 'loading' && (
+        <div className="photo-lightbox-status">Loading original image</div>
+      )}
+      {imageState === 'error' && (
+        <div className="photo-lightbox-status is-error">
+          <span>Image could not be loaded.</span>
+          <a href={src} target="_blank" rel="noreferrer">Open original</a>
+        </div>
+      )}
+      {/* Use the exact R2 object URL here so the lightbox never routes through image optimization. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className="photo-lightbox-img"
+        decoding="async"
+        loading="eager"
+        onLoad={() => setImageState('loaded')}
+        onError={() => setImageState('error')}
+      />
+    </>
+  );
+};
+
 const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: LightboxProps) => {
+  const activeImage = images[currentIndex];
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return;
@@ -75,12 +111,10 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
       )}
 
       <div className="photo-lightbox-image">
-        {/* Use the exact R2 object URL here so the lightbox never routes through image optimization. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={images[currentIndex]}
+        <LightboxImage
+          key={activeImage}
+          src={activeImage}
           alt={`Photo ${currentIndex + 1}`}
-          className="photo-lightbox-img"
         />
       </div>
 
