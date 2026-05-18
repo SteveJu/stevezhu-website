@@ -453,6 +453,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   const [isCreatingTravel, setIsCreatingTravel] = useState(false);
   const [newTravel, setNewTravel] = useState({ title: '', startDate: '', endDate: '' });
   const [selectedTravelDate, setSelectedTravelDate] = useState('');
+  const [pendingDeleteTravelId, setPendingDeleteTravelId] = useState('');
   const [knownCompanions, setKnownCompanions] = useState<string[]>([]);
   const [newCompanionName, setNewCompanionName] = useState('');
   const [isCompanionHistoryOpen, setIsCompanionHistoryOpen] = useState(false);
@@ -662,6 +663,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
 
   const openEditor = (travelId: string) => {
     const nextTravel = travels.find((travel) => travel.id === travelId);
+    setPendingDeleteTravelId('');
     setActiveTravelId(travelId);
     setSelectedTravelDate(nextTravel?.startDate ?? '');
     setDraftJelly(null);
@@ -690,11 +692,17 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
     setActiveTravelId(nextTravel.id);
     setSelectedTravelDate(nextTravel.startDate);
     setNewTravel({ title: '', startDate: '', endDate: '' });
+    setPendingDeleteTravelId('');
     setIsCreatingTravel(false);
     setView('editor');
   };
 
   const deleteTravel = (travelId: string) => {
+    if (pendingDeleteTravelId !== travelId) {
+      setPendingDeleteTravelId(travelId);
+      return;
+    }
+
     setTravels((currentTravels) => currentTravels.filter((travel) => travel.id !== travelId));
     setTimelineCards((currentCards) => {
       return Object.fromEntries(Object.entries(currentCards).filter(([id]) => id !== travelId));
@@ -709,6 +717,8 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
       setDraftJelly(null);
       setEditingJellyId(null);
     }
+
+    setPendingDeleteTravelId('');
   };
 
   const getShareUrl = (code: string) => {
@@ -1567,8 +1577,9 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
                   type="button"
                   onClick={() => deleteTravel(travel.id)}
                   aria-label={`删除旅行计划 ${travel.title}`}
+                  className={pendingDeleteTravelId === travel.id ? 'is-confirming-delete' : ''}
                 >
-                  Delete
+                  {pendingDeleteTravelId === travel.id ? 'Confirm' : 'Delete'}
                 </button>
               </div>
             </div>

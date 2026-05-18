@@ -720,6 +720,11 @@ body {
   transform: translateY(-1px);
 }
 
+.travel-history-actions button.is-confirming-delete {
+  border-color: var(--mode-accent-2);
+  color: var(--mode-accent-2);
+}
+
 .travel-share-code {
   display: inline-flex;
   align-items: center;
