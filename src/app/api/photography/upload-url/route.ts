@@ -3,7 +3,7 @@ import { isOwnerUnlocked } from '@/lib/ownerAuth';
 import { createR2UploadUrl } from '@/lib/r2';
 
 const supportedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const maxPhotoBytes = 25 * 1024 * 1024;
+const maxPhotoBytes = 100 * 1024 * 1024;
 
 const safeSegment = (value: string) => {
   return value.toLowerCase().replace(/[^a-z0-9-_]+/g, '-').replace(/^-+|-+$/g, '') || 'photo';

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect } from 'react';
 
 interface LightboxProps {
@@ -76,13 +75,12 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
       )}
 
       <div className="photo-lightbox-image">
-        <Image
+        {/* Use the exact R2 object URL here so the lightbox never routes through image optimization. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={images[currentIndex]}
           alt={`Photo ${currentIndex + 1}`}
-          fill
-          sizes="100vw"
-          unoptimized
-          className="object-contain"
+          className="photo-lightbox-img"
         />
       </div>
 

@@ -2302,6 +2302,13 @@ body {
   height: min(100%, calc(100vh - clamp(6rem, 12vw, 8rem)));
 }
 
+.photo-lightbox-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .photo-lightbox-close,
 .photo-lightbox-nav {
   position: absolute;

@@ -137,8 +137,8 @@ const PhotographyManager = () => {
 
   const uploadPhoto = async (file: File) => {
     if (!activeAlbum) return;
-    if (file.size > 25 * 1024 * 1024) {
-      setUploadStatus('图片不能超过 25MB');
+    if (file.size > 100 * 1024 * 1024) {
+      setUploadStatus('图片不能超过 100MB');
       return;
     }
 
