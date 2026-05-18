@@ -588,6 +588,142 @@ body {
   line-height: 1.7;
 }
 
+.photo-manager {
+  display: grid;
+  gap: 1rem;
+}
+
+.photo-manager-toolbar,
+.photo-manager-create,
+.photo-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.photo-manager-toolbar strong,
+.photo-upload-row p {
+  color: var(--mode-accent);
+  font-family: var(--mode-font-display);
+}
+
+.photo-manager-create input,
+.photo-editor-fields input,
+.photo-manager-photos input {
+  min-width: 0;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  color: var(--mode-ink);
+  padding: 0.7rem 0.75rem;
+  outline: none;
+}
+
+.photo-manager-create button,
+.photo-manager-photos button {
+  border: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  color: var(--mode-ink);
+  padding: 0.7rem 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.photo-manager-grid {
+  display: grid;
+  grid-template-columns: minmax(13rem, 0.32fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.photo-album-list,
+.photo-editor-panel {
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+}
+
+.photo-album-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.photo-album-list button {
+  display: grid;
+  gap: 0.35rem;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 76%, transparent);
+  color: var(--mode-ink);
+  padding: 0.85rem;
+  text-align: left;
+}
+
+.photo-album-list button.is-active {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+}
+
+.photo-album-list span,
+.photo-album-list small,
+.photo-editor-fields span {
+  color: var(--mode-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.photo-editor-panel,
+.photo-editor-fields {
+  display: grid;
+  gap: 1rem;
+}
+
+.photo-editor-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.photo-editor-fields label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.photo-manager-checkbox {
+  align-content: end;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.photo-manager-photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.8rem;
+}
+
+.photo-manager-photos article {
+  display: grid;
+  gap: 0.65rem;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 78%, transparent);
+  padding: 0.65rem;
+}
+
+.photo-manager-thumb {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  overflow: hidden;
+}
+
+.photo-manager-thumb img {
+  object-fit: cover;
+}
+
+.photo-manager-photos div {
+  display: grid;
+  gap: 0.45rem;
+}
+
 .owner-travel-note {
   margin-top: 1.4rem;
 }
@@ -2144,7 +2280,9 @@ body {
   .travel-history-card,
   .travel-editor-grid,
   .travel-create-form,
-  .travel-form-grid {
+  .travel-form-grid,
+  .photo-manager-grid,
+  .photo-editor-fields {
     grid-template-columns: 1fr;
   }
 

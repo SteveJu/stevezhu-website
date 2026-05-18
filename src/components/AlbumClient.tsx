@@ -55,6 +55,7 @@ const AlbumClient = ({ album }: AlbumClientProps) => {
                 alt={`${album.title} photo ${index + 1}`}
                 fill
                 sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                unoptimized
                 className="object-cover hover:scale-105 transition-transform duration-500"
               />
             </button>
