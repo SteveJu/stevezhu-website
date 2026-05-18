@@ -71,9 +71,16 @@ const PhotographyManager = () => {
       });
 
       setSaveStatus(response.ok ? 'saved' : 'error');
+      return response.ok;
     } catch {
       setSaveStatus('error');
+      return false;
     }
+  };
+
+  const getResponseError = async (response: Response) => {
+    const result = (await response.json().catch(() => null)) as { error?: string } | null;
+    return result?.error || `${response.status} ${response.statusText}`;
   };
 
   const createAlbum = () => {
@@ -149,7 +156,9 @@ const PhotographyManager = () => {
         }),
       });
 
-      if (!uploadResponse.ok) throw new Error('Upload URL failed.');
+      if (!uploadResponse.ok) {
+        throw new Error(`生成上传链接失败：${await getResponseError(uploadResponse)}`);
+      }
 
       const upload = (await uploadResponse.json()) as { uploadUrl: string; publicUrl: string; storageKey: string };
       const r2Response = await fetch(upload.uploadUrl, {
@@ -158,7 +167,9 @@ const PhotographyManager = () => {
         body: file,
       });
 
-      if (!r2Response.ok) throw new Error('R2 upload failed.');
+      if (!r2Response.ok) {
+        throw new Error(`上传到 R2 失败：${r2Response.status} ${r2Response.statusText}`);
+      }
 
       const now = new Date().toISOString();
       const photo: PhotoRecord = {
@@ -173,13 +184,19 @@ const PhotographyManager = () => {
         createdAt: now,
       };
 
-      await savePayload({
+      const isSaved = await savePayload({
         ...payload,
         photos: [...payload.photos, photo],
       });
+
+      if (!isSaved) {
+        setUploadStatus('照片已上传到 R2，但保存到数据库失败');
+        return;
+      }
+
       setUploadStatus('已上传');
-    } catch {
-      setUploadStatus('上传失败，请检查 R2 环境变量');
+    } catch (error) {
+      setUploadStatus(error instanceof Error ? error.message : '上传失败');
     }
   };
 
