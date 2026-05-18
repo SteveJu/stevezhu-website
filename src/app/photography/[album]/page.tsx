@@ -24,6 +24,7 @@ export default async function AlbumPage({ params }: AlbumPageProps) {
       album={{
         title: album.title,
         subtitle: album.subtitle,
+        description: album.description,
         photos: photos.map((photo) => photo.url),
       }}
     />

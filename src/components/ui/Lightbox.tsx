@@ -85,6 +85,7 @@ const Lightbox = ({ isOpen, onClose, images, currentIndex, onNext, onPrev }: Lig
           width={1200}
           height={900}
           sizes="90vw"
+          unoptimized
           className="max-w-full max-h-full object-contain"
         />
       </div>
