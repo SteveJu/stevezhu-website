@@ -53,6 +53,7 @@ type PlannerPayload = {
 
 const initialTravels: TravelRecord[] = [];
 const companionStorageKey = 'stevezhu_travel_companions';
+const maxAiImageBytes = 6 * 1024 * 1024;
 
 const createShareCode = () => {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
@@ -458,12 +459,14 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   const [companionHistoryPosition, setCompanionHistoryPosition] = useState<{ left: number; top: number } | null>(null);
   const [isPlannerLoaded, setIsPlannerLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'loading' | 'saved' | 'saving' | 'error' | 'local'>('loading');
+  const [hasSaveConflict, setHasSaveConflict] = useState(false);
   const [copiedShareCode, setCopiedShareCode] = useState('');
   const [aiFillStatus, setAiFillStatus] = useState<Record<string, 'idle' | 'reading' | 'filled' | 'error'>>({});
   const [generalAiFillStatus, setGeneralAiFillStatus] = useState<'idle' | 'reading' | 'filled' | 'error'>('idle');
   const jellyIdCounter = useRef(0);
   const travelIdCounter = useRef(0);
   const hasLoadedCompanions = useRef(false);
+  const plannerUpdatedAt = useRef<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const openCompanionHistory = (event: MouseEvent<HTMLButtonElement>) => {
@@ -520,7 +523,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
           throw new Error('Planner backend is not ready.');
         }
 
-        const result = (await response.json()) as { payload?: unknown };
+        const result = (await response.json()) as { payload?: unknown; updatedAt?: string | null };
 
         if (isMounted && isPlannerPayload(result.payload)) {
           const loadedTravels = result.payload.travels.map((travel) => ({
@@ -543,6 +546,8 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
             Object.values(result.payload.timelineCards).flat().map((card) => card.id),
             'jelly-',
           );
+          plannerUpdatedAt.current = result.updatedAt ?? null;
+          setHasSaveConflict(false);
         }
 
         if (isMounted) {
@@ -567,7 +572,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
   }, [isSharedMode, plannerApiPath]);
 
   useEffect(() => {
-    if (!isPlannerLoaded) return;
+    if (!isPlannerLoaded || hasSaveConflict) return;
 
     if (saveTimer.current) {
       clearTimeout(saveTimer.current);
@@ -587,9 +592,23 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ payload }),
-      }).then((response) => {
-        setSaveStatus(response.ok ? 'saved' : 'error');
+        body: JSON.stringify({ payload, updatedAt: plannerUpdatedAt.current }),
+      }).then(async (response) => {
+        const result = (await response.json().catch(() => null)) as { updatedAt?: string | null } | null;
+        if (response.status === 409) {
+          setHasSaveConflict(true);
+          setSaveStatus('error');
+          window.alert('这个旅行计划刚刚被其他人更新了。为了避免覆盖对方的修改，请刷新页面后再继续编辑。');
+          return;
+        }
+
+        if (response.ok) {
+          plannerUpdatedAt.current = result?.updatedAt ?? plannerUpdatedAt.current;
+          setSaveStatus('saved');
+          return;
+        }
+
+        setSaveStatus('error');
       }).catch(() => {
         setSaveStatus('error');
       });
@@ -600,7 +619,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
         clearTimeout(saveTimer.current);
       }
     };
-  }, [formValues, isPlannerLoaded, knownCompanions, plannerApiPath, timelineCards, travels]);
+  }, [formValues, hasSaveConflict, isPlannerLoaded, knownCompanions, plannerApiPath, timelineCards, travels]);
 
   const activeTravel = useMemo(() => {
     return travels.find((travel) => travel.id === activeTravelId) ?? travels[0];
@@ -881,6 +900,13 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
     });
   };
 
+  const isValidAiImageFile = (file: File) => {
+    if (file.size <= maxAiImageBytes) return true;
+
+    window.alert('截图太大了，请换一张 6MB 以内的图片。');
+    return false;
+  };
+
   const getValidatedAiFields = (card: JellyCard, fields: Record<string, string>) => {
     if (!activeTravel) return fields;
 
@@ -910,6 +936,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
 
   const fillJellyFromScreenshot = async (card: JellyCard, file: File) => {
     if (!activeTravel) return;
+    if (!isValidAiImageFile(file)) return;
 
     setAiFillStatus((currentStatus) => ({ ...currentStatus, [card.id]: 'reading' }));
 
@@ -962,6 +989,7 @@ const TravelPlannerWorkspace = ({ shareCode }: { shareCode?: string }) => {
 
   const createJellyFromScreenshot = async (file: File) => {
     if (!activeTravel) return;
+    if (!isValidAiImageFile(file)) return;
 
     setGeneralAiFillStatus('reading');
 

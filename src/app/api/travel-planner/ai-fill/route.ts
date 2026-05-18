@@ -19,6 +19,8 @@ const moduleFields: Record<SharedJellyCard['moduleId'], string[]> = {
 
 const supportedMimeTypes = new Set(['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif']);
 const moduleIds = Object.keys(moduleFields) as SharedJellyCard['moduleId'][];
+const maxImageBytes = 6 * 1024 * 1024;
+const geminiTimeoutMs = 30_000;
 
 const isSharedAccessAllowed = async (shareCode?: string) => {
   if (!shareCode) return false;
@@ -45,6 +47,12 @@ export async function POST(request: Request) {
 
   if (!supportedMimeTypes.has(body.mimeType)) {
     return NextResponse.json({ error: 'Unsupported image type.' }, { status: 400 });
+  }
+
+  const imageData = cleanBase64(body.imageBase64);
+  const estimatedImageBytes = Math.floor((imageData.length * 3) / 4);
+  if (estimatedImageBytes > maxImageBytes) {
+    return NextResponse.json({ error: 'Image is too large.' }, { status: 413 });
   }
 
   const hasAccess = await isOwnerUnlocked() || await isSharedAccessAllowed(body.shareCode);
@@ -87,6 +95,7 @@ export async function POST(request: Request) {
         headers: {
           'Content-Type': 'application/json',
         },
+        signal: AbortSignal.timeout(geminiTimeoutMs),
         body: JSON.stringify({
           contents: [
             {
@@ -95,7 +104,7 @@ export async function POST(request: Request) {
                 {
                   inline_data: {
                     mime_type: body.mimeType,
-                    data: cleanBase64(body.imageBase64),
+                    data: imageData,
                   },
                 },
               ],

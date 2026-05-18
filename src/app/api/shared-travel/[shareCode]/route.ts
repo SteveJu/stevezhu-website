@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import {
   isTravelPlannerPayload,
-  loadTravelPlannerPayload,
+  loadTravelPlannerState,
   saveTravelPlannerPayload,
+  TravelPlannerConflictError,
   type TravelPlannerPayload,
 } from '@/lib/travelPlannerState';
 
@@ -29,14 +30,14 @@ export async function GET(
   const { shareCode } = await params;
 
   try {
-    const payload = await loadTravelPlannerPayload();
-    const sharedPayload = getSharedPayload(payload, shareCode);
+    const state = await loadTravelPlannerState();
+    const sharedPayload = getSharedPayload(state.payload, shareCode);
 
     if (!sharedPayload) {
       return NextResponse.json({ error: 'Shared travel not found.' }, { status: 404 });
     }
 
-    return NextResponse.json({ payload: sharedPayload });
+    return NextResponse.json({ payload: sharedPayload, updatedAt: state.updatedAt });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to load shared travel.' },
@@ -50,14 +51,15 @@ export async function PUT(
   { params }: { params: Promise<{ shareCode: string }> },
 ) {
   const { shareCode } = await params;
-  const body = (await request.json().catch(() => null)) as { payload?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as { payload?: unknown; updatedAt?: string | null } | null;
 
   if (!body || !isTravelPlannerPayload(body.payload) || body.payload.travels.length !== 1) {
     return NextResponse.json({ error: 'Invalid shared travel payload.' }, { status: 400 });
   }
 
   try {
-    const currentPayload = await loadTravelPlannerPayload();
+    const state = await loadTravelPlannerState();
+    const currentPayload = state.payload;
     const incomingTravel = body.payload.travels[0];
     const existingTravel = currentPayload.travels.find((travel) => travel.shareCode === shareCode);
 
@@ -85,10 +87,20 @@ export async function PUT(
       ])),
     };
 
-    await saveTravelPlannerPayload(nextPayload);
+    const updatedAt = await saveTravelPlannerPayload(nextPayload, body.updatedAt);
 
-    return NextResponse.json({ saved: true });
+    return NextResponse.json({ saved: true, updatedAt });
   } catch (error) {
+    if (error instanceof TravelPlannerConflictError) {
+      const state = await loadTravelPlannerState();
+      const sharedPayload = getSharedPayload(state.payload, shareCode);
+
+      return NextResponse.json(
+        { error: 'Shared travel was updated elsewhere.', payload: sharedPayload, updatedAt: state.updatedAt },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to save shared travel.' },
       { status: 500 },

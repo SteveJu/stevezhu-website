@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Steve Zhu Website
 
-## Getting Started
+Personal website built with Next.js. The public site has automatic weekday/weekend visual modes, resume download, photography, experience, education, and technical skills sections.
 
-First, run the development server:
+The owner area includes:
+
+- Travel planner with Supabase-backed persistence
+- Shared travel-plan links for collaborators
+- AI screenshot filling for travel items through Gemini
+- Stock dashboard placeholder
+
+## Local Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+```
 
-## Learn More
+Run both before pushing changes.
 
-To learn more about Next.js, take a look at the following resources:
+## Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create `.env.local` locally. Do not commit it.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+OWNER_PASSCODE=
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.5-pro
+```
 
-## Deploy on Vercel
+`OWNER_PASSCODE` is used to sign owner-mode cookies. Changing it invalidates existing owner sessions.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Supabase
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The travel planner currently stores one JSON snapshot row in `travel_planner_state`.
+
+Initialize the table with:
+
+```bash
+supabase/travel_planner_state.sql
+```
+
+The API uses the service role key server-side only. Never expose `SUPABASE_SERVICE_ROLE_KEY` to client code.
+
+## Deployment
+
+The site is designed for Vercel. Configure the same environment variables in Vercel before deploying.

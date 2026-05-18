@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { ownerCookieName } from '@/lib/ownerAuth';
+import { createOwnerCookieValue, ownerCookieName } from '@/lib/ownerAuth';
 
 export async function POST(request: Request) {
   const configuredPasscode = process.env.OWNER_PASSCODE;
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set(ownerCookieName, 'unlocked', {
+  cookieStore.set(ownerCookieName, createOwnerCookieValue(configuredPasscode), {
     httpOnly: true,
     sameSite: 'lax',
     secure: process.env.NODE_ENV === 'production' && !isLocalhost,

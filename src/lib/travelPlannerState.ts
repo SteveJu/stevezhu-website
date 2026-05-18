@@ -27,7 +27,15 @@ export type TravelPlannerPayload = {
 
 type PlannerStateRow = {
   payload: unknown;
+  updated_at: string;
 };
+
+export class TravelPlannerConflictError extends Error {
+  constructor() {
+    super('Travel planner state was updated by another client.');
+    this.name = 'TravelPlannerConflictError';
+  }
+}
 
 export const emptyPlannerPayload: TravelPlannerPayload = {
   travels: [],
@@ -50,24 +58,54 @@ export const isTravelPlannerPayload = (payload: unknown): payload is TravelPlann
   );
 };
 
-export const loadTravelPlannerPayload = async () => {
+export const loadTravelPlannerState = async () => {
   const rows = await requestSupabase<PlannerStateRow[]>(
-    `/travel_planner_state?id=eq.${plannerStateId}&select=payload`,
+    `/travel_planner_state?id=eq.${plannerStateId}&select=payload,updated_at`,
   );
   const payload = rows[0]?.payload;
 
-  return isTravelPlannerPayload(payload) ? payload : emptyPlannerPayload;
+  return {
+    payload: isTravelPlannerPayload(payload) ? payload : emptyPlannerPayload,
+    updatedAt: rows[0]?.updated_at ?? null,
+  };
 };
 
-export const saveTravelPlannerPayload = async (payload: TravelPlannerPayload) => {
-  await requestSupabase('/travel_planner_state?on_conflict=id', {
+export const loadTravelPlannerPayload = async () => {
+  return (await loadTravelPlannerState()).payload;
+};
+
+export const saveTravelPlannerPayload = async (payload: TravelPlannerPayload, expectedUpdatedAt?: string | null) => {
+  if (expectedUpdatedAt) {
+    const rows = await requestSupabase<Array<{ updated_at: string }>>(
+      `/travel_planner_state?id=eq.${plannerStateId}&updated_at=eq.${encodeURIComponent(expectedUpdatedAt)}&select=updated_at`,
+      {
+        method: 'PATCH',
+        headers: {
+          Prefer: 'return=representation',
+        },
+        body: {
+          payload,
+        },
+      },
+    );
+
+    if (rows.length === 0) {
+      throw new TravelPlannerConflictError();
+    }
+
+    return rows[0]?.updated_at ?? null;
+  }
+
+  const rows = await requestSupabase<Array<{ updated_at: string }>>('/travel_planner_state?on_conflict=id&select=updated_at', {
     method: 'POST',
     headers: {
-      Prefer: 'resolution=merge-duplicates,return=minimal',
+      Prefer: 'resolution=merge-duplicates,return=representation',
     },
     body: {
       id: plannerStateId,
       payload,
     },
   });
+
+  return rows[0]?.updated_at ?? null;
 };

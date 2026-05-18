@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { isOwnerUnlocked } from '@/lib/ownerAuth';
-import { isTravelPlannerPayload, loadTravelPlannerPayload, saveTravelPlannerPayload } from '@/lib/travelPlannerState';
+import {
+  isTravelPlannerPayload,
+  loadTravelPlannerState,
+  saveTravelPlannerPayload,
+  TravelPlannerConflictError,
+} from '@/lib/travelPlannerState';
 
 const unauthorizedResponse = () => NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
 
@@ -10,8 +15,11 @@ export async function GET() {
   }
 
   try {
+    const state = await loadTravelPlannerState();
+
     return NextResponse.json({
-      payload: await loadTravelPlannerPayload(),
+      payload: state.payload,
+      updatedAt: state.updatedAt,
     });
   } catch (error) {
     return NextResponse.json(
@@ -26,17 +34,26 @@ export async function PUT(request: Request) {
     return unauthorizedResponse();
   }
 
-  const body = (await request.json().catch(() => null)) as { payload?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as { payload?: unknown; updatedAt?: string | null } | null;
 
   if (!body || !isTravelPlannerPayload(body.payload)) {
     return NextResponse.json({ error: 'Invalid planner payload.' }, { status: 400 });
   }
 
   try {
-    await saveTravelPlannerPayload(body.payload);
+    const updatedAt = await saveTravelPlannerPayload(body.payload, body.updatedAt);
 
-    return NextResponse.json({ saved: true });
+    return NextResponse.json({ saved: true, updatedAt });
   } catch (error) {
+    if (error instanceof TravelPlannerConflictError) {
+      const state = await loadTravelPlannerState();
+
+      return NextResponse.json(
+        { error: 'Planner state was updated elsewhere.', payload: state.payload, updatedAt: state.updatedAt },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to save planner state.' },
       { status: 500 },
