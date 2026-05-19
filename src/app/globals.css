@@ -230,6 +230,10 @@ body {
   opacity: 1;
 }
 
+.theme-floating-mode-toggle-compact {
+  bottom: 3.9rem;
+}
+
 .theme-mode-badge {
   position: fixed;
   right: 1rem;

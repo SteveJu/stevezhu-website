@@ -62,7 +62,11 @@ const SiteModeFrame = ({
         className="site-frame snap-y snap-mandatory overflow-y-scroll h-screen"
       >
         {children}
-        {showFloatingModeToggle && <SiteModeToggle className="theme-floating-mode-toggle" />}
+        {showFloatingModeToggle && (
+          <SiteModeToggle
+            className={`theme-floating-mode-toggle ${showFloatingResume ? '' : 'theme-floating-mode-toggle-compact'}`}
+          />
+        )}
         <OwnerAccess />
         {showFloatingResume && (
           <a
