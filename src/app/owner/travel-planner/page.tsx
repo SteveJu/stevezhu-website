@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 const TravelPlannerPage = () => {
   return (
-    <SiteModeFrame>
+    <SiteModeFrame showFloatingResume={false}>
       <OwnerPageGate>
         <section className="theme-section owner-page min-h-screen px-6 py-20">
           <OwnerHomeLink />

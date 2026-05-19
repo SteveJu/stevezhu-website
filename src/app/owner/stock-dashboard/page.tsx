@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const StockDashboardPage = () => {
   return (
-    <SiteModeFrame>
+    <SiteModeFrame showFloatingResume={false}>
       <OwnerPageGate>
         <section className="theme-section owner-page min-h-screen flex items-center px-6 py-20">
           <OwnerHomeLink />

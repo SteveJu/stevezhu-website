@@ -11,9 +11,11 @@ const storageKey = 'stevezhu-site-mode';
 const SiteModeFrame = ({
   children,
   showFloatingModeToggle = true,
+  showFloatingResume = true,
 }: {
   children: React.ReactNode;
   showFloatingModeToggle?: boolean;
+  showFloatingResume?: boolean;
 }) => {
   const [mode, setMode] = useState<SiteMode>(() => getSiteMode());
   const [isManual, setIsManual] = useState(false);
@@ -62,14 +64,16 @@ const SiteModeFrame = ({
         {children}
         {showFloatingModeToggle && <SiteModeToggle className="theme-floating-mode-toggle" />}
         <OwnerAccess />
-        <a
-          href="/Zhengqi_Zhu_Resume.pdf"
-          download="Zhengqi_Zhu_Resume.pdf"
-          className="theme-floating-resume"
-          aria-label="Download resume"
-        >
-          <span>Get Resume PDF</span>
-        </a>
+        {showFloatingResume && (
+          <a
+            href="/Zhengqi_Zhu_Resume.pdf"
+            download="Zhengqi_Zhu_Resume.pdf"
+            className="theme-floating-resume"
+            aria-label="Download resume"
+          >
+            <span>Get Resume PDF</span>
+          </a>
+        )}
       </main>
     </SiteModeContext.Provider>
   );
