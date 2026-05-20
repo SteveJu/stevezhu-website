@@ -379,7 +379,8 @@ body {
   margin-top: 1rem;
 }
 
-.theme-owner-links a {
+.theme-owner-links a,
+.theme-owner-exit {
   border: 1px solid var(--mode-line);
   background: var(--mode-surface);
   color: var(--mode-ink);
@@ -392,7 +393,14 @@ body {
   transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
 }
 
-.theme-owner-links a:hover {
+.theme-owner-exit {
+  width: 100%;
+  margin-top: 0.75rem;
+  color: var(--mode-muted);
+}
+
+.theme-owner-links a:hover,
+.theme-owner-exit:hover {
   border-color: var(--mode-accent);
   color: var(--mode-accent);
   transform: translateX(3px);
@@ -445,6 +453,7 @@ body {
 .site-frame[data-site-mode="cyber"] .theme-owner-button,
 .site-frame[data-site-mode="cyber"] .theme-owner-panel,
 .site-frame[data-site-mode="cyber"] .theme-owner-links a,
+.site-frame[data-site-mode="cyber"] .theme-owner-exit,
 .site-frame[data-site-mode="cyber"] .theme-owner-form button {
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
@@ -452,6 +461,7 @@ body {
 .site-frame[data-site-mode="sketch"] .theme-owner-button,
 .site-frame[data-site-mode="sketch"] .theme-owner-panel,
 .site-frame[data-site-mode="sketch"] .theme-owner-links a,
+.site-frame[data-site-mode="sketch"] .theme-owner-exit,
 .site-frame[data-site-mode="sketch"] .theme-owner-form button,
 .site-frame[data-site-mode="sketch"] .theme-owner-form input,
 .site-frame[data-site-mode="sketch"] .owner-gate-form input {

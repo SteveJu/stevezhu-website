@@ -31,6 +31,18 @@ export const loginOwner = async (key: string) => {
   return true;
 };
 
+export const logoutOwner = async () => {
+  const response = await fetch('/api/owner-logout', {
+    method: 'POST',
+    credentials: 'same-origin',
+  });
+
+  if (!response.ok) return false;
+
+  window.dispatchEvent(new Event(ownerModeEvent));
+  return true;
+};
+
 const OwnerAccess = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -64,6 +76,15 @@ const OwnerAccess = () => {
     setError('密钥不对，再试一次。');
   };
 
+  const exitOwner = async () => {
+    if (await logoutOwner()) {
+      setIsUnlocked(false);
+      setIsOpen(false);
+      setError('');
+      setKey('');
+    }
+  };
+
   return (
     <div className="theme-owner-access">
       <button
@@ -91,6 +112,9 @@ const OwnerAccess = () => {
                 <Link href="/owner/travel-planner">Travel Planner</Link>
                 <Link href="/owner/photography">Photography Manager</Link>
               </div>
+              <button type="button" className="theme-owner-exit" onClick={exitOwner}>
+                Exit Owner
+              </button>
             </>
           ) : (
             <form onSubmit={submitKey} className="theme-owner-form">
