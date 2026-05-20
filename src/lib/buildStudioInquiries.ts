@@ -5,12 +5,16 @@ export type BuildStudioInquiryStatus = 'new' | 'estimating' | 'accepted' | 'decl
 export type BuildStudioInquiry = {
   id: string;
   name: string;
-  email: string;
-  projectType: string;
-  budgetRange: string;
+  contactMethods: string;
+  productFormat: string;
+  platforms: string;
   timeline: string;
-  needsDeployment: boolean;
   description: string;
+  featureScope: string;
+  audienceSizeDau: string;
+  audienceSizeMau: string;
+  monthlySpend: string;
+  maxBudget: string;
   referenceLinks: string;
   status: BuildStudioInquiryStatus;
   createdAt: string;
@@ -19,12 +23,19 @@ export type BuildStudioInquiry = {
 type BuildStudioInquiryRow = {
   id: string;
   name: string;
-  email: string;
-  project_type: string;
-  budget_range: string;
+  contact_methods?: string;
+  email?: string;
+  product_format?: string;
+  platforms?: string;
+  project_type?: string;
   timeline: string;
-  needs_deployment: boolean;
   description: string;
+  feature_scope?: string;
+  audience_size_dau?: string;
+  audience_size_mau?: string;
+  monthly_spend?: string;
+  max_budget?: string;
+  budget_range?: string;
   reference_links: string;
   status: BuildStudioInquiryStatus;
   created_at: string;
@@ -37,12 +48,16 @@ const statuses = new Set<BuildStudioInquiryStatus>(['new', 'estimating', 'accept
 const toInquiry = (row: BuildStudioInquiryRow): BuildStudioInquiry => ({
   id: row.id,
   name: row.name,
-  email: row.email,
-  projectType: row.project_type,
-  budgetRange: row.budget_range,
+  contactMethods: row.contact_methods || row.email || '',
+  productFormat: row.product_format || row.project_type || '',
+  platforms: row.platforms || '',
   timeline: row.timeline,
-  needsDeployment: row.needs_deployment,
   description: row.description,
+  featureScope: row.feature_scope || '',
+  audienceSizeDau: row.audience_size_dau || '',
+  audienceSizeMau: row.audience_size_mau || '',
+  monthlySpend: row.monthly_spend || '',
+  maxBudget: row.max_budget || row.budget_range || '',
   referenceLinks: row.reference_links,
   status: statuses.has(row.status) ? row.status : 'new',
   createdAt: row.created_at,
@@ -59,16 +74,20 @@ export const parseBuildStudioInquiryInput = (value: unknown): BuildStudioInquiry
   const candidate = value as Partial<Record<keyof BuildStudioInquiryInput, unknown>>;
   const inquiry: BuildStudioInquiryInput = {
     name: cleanText(candidate.name, 120),
-    email: cleanText(candidate.email, 180),
-    projectType: cleanText(candidate.projectType, 120),
-    budgetRange: cleanText(candidate.budgetRange, 80),
+    contactMethods: cleanText(candidate.contactMethods, 800),
+    productFormat: cleanText(candidate.productFormat, 80),
+    platforms: cleanText(candidate.platforms, 180),
     timeline: cleanText(candidate.timeline, 80),
-    needsDeployment: Boolean(candidate.needsDeployment),
     description: cleanText(candidate.description, 2200),
+    featureScope: cleanText(candidate.featureScope, 2200),
+    audienceSizeDau: cleanText(candidate.audienceSizeDau, 80),
+    audienceSizeMau: cleanText(candidate.audienceSizeMau, 80),
+    monthlySpend: cleanText(candidate.monthlySpend, 120),
+    maxBudget: cleanText(candidate.maxBudget, 120),
     referenceLinks: cleanText(candidate.referenceLinks, 1000),
   };
 
-  if (!inquiry.name || !inquiry.email || !inquiry.description) return null;
+  if (!inquiry.contactMethods || !inquiry.description || !inquiry.featureScope) return null;
 
   return inquiry;
 };
@@ -92,12 +111,16 @@ export const createBuildStudioInquiry = async (inquiry: BuildStudioInquiryInput)
     body: {
       id,
       name: inquiry.name,
-      email: inquiry.email,
-      project_type: inquiry.projectType,
-      budget_range: inquiry.budgetRange,
+      contact_methods: inquiry.contactMethods,
+      product_format: inquiry.productFormat,
+      platforms: inquiry.platforms,
       timeline: inquiry.timeline,
-      needs_deployment: inquiry.needsDeployment,
       description: inquiry.description,
+      feature_scope: inquiry.featureScope,
+      audience_size_dau: inquiry.audienceSizeDau,
+      audience_size_mau: inquiry.audienceSizeMau,
+      monthly_spend: inquiry.monthlySpend,
+      max_budget: inquiry.maxBudget,
       reference_links: inquiry.referenceLinks,
       status: 'new',
     },

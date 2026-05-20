@@ -5,23 +5,31 @@ import { checkOwnerStatus } from './OwnerAccess';
 
 type FormState = {
   name: string;
-  email: string;
-  projectType: string;
-  budgetRange: string;
+  contactMethods: string;
+  productFormat: string;
+  platforms: string;
   timeline: string;
-  needsDeployment: boolean;
   description: string;
+  featureScope: string;
+  audienceSizeDau: string;
+  audienceSizeMau: string;
+  monthlySpend: string;
+  maxBudget: string;
   referenceLinks: string;
 };
 
 const emptyForm: FormState = {
   name: '',
-  email: '',
-  projectType: '',
-  budgetRange: '',
+  contactMethods: '',
+  productFormat: '',
+  platforms: '',
   timeline: '',
-  needsDeployment: true,
   description: '',
+  featureScope: '',
+  audienceSizeDau: '',
+  audienceSizeMau: '',
+  monthlySpend: '',
+  maxBudget: '',
   referenceLinks: '',
 };
 
@@ -125,32 +133,36 @@ const BuildStudio = () => {
             <div className="build-studio-fields">
               <label>
                 <span>Name</span>
-                <input value={form.name} onChange={(event) => updateForm('name', event.target.value)} required />
+                <input value={form.name} onChange={(event) => updateForm('name', event.target.value)} />
+              </label>
+              <label className="is-wide">
+                <span>Contact methods</span>
+                <textarea
+                  value={form.contactMethods}
+                  onChange={(event) => updateForm('contactMethods', event.target.value)}
+                  required
+                  rows={3}
+                  placeholder="Email, phone, WeChat, LinkedIn, Discord, or anything else."
+                />
               </label>
               <label>
-                <span>Email</span>
-                <input value={form.email} onChange={(event) => updateForm('email', event.target.value)} type="email" required />
-              </label>
-              <label>
-                <span>Project type</span>
-                <select value={form.projectType} onChange={(event) => updateForm('projectType', event.target.value)}>
+                <span>App or website</span>
+                <select value={form.productFormat} onChange={(event) => updateForm('productFormat', event.target.value)}>
                   <option value="">Select one</option>
-                  <option>Personal site</option>
-                  <option>Landing page</option>
-                  <option>Internal tool</option>
-                  <option>AI workflow</option>
-                  <option>Prototype MVP</option>
+                  <option>Website</option>
+                  <option>Web app</option>
+                  <option>Mobile app</option>
+                  <option>Website + app</option>
+                  <option>Not sure yet</option>
                 </select>
               </label>
               <label>
-                <span>Budget</span>
-                <select value={form.budgetRange} onChange={(event) => updateForm('budgetRange', event.target.value)}>
-                  <option value="">Not sure yet</option>
-                  <option>$300 - $800</option>
-                  <option>$800 - $1,500</option>
-                  <option>$1,500 - $3,000</option>
-                  <option>$3,000+</option>
-                </select>
+                <span>iOS / Android / Web</span>
+                <input
+                  value={form.platforms}
+                  onChange={(event) => updateForm('platforms', event.target.value)}
+                  placeholder="Web, iOS, Android, or all"
+                />
               </label>
               <label>
                 <span>Timeline</span>
@@ -162,13 +174,21 @@ const BuildStudio = () => {
                   <option>1 month+</option>
                 </select>
               </label>
-              <label className="build-studio-check">
-                <input
-                  checked={form.needsDeployment}
-                  onChange={(event) => updateForm('needsDeployment', event.target.checked)}
-                  type="checkbox"
-                />
-                <span>Needs deployment</span>
+              <label>
+                <span>DAU</span>
+                <input value={form.audienceSizeDau} onChange={(event) => updateForm('audienceSizeDau', event.target.value)} placeholder="Expected daily active users" />
+              </label>
+              <label>
+                <span>MAU</span>
+                <input value={form.audienceSizeMau} onChange={(event) => updateForm('audienceSizeMau', event.target.value)} placeholder="Expected monthly active users" />
+              </label>
+              <label>
+                <span>Monthly fixed cost limit</span>
+                <input value={form.monthlySpend} onChange={(event) => updateForm('monthlySpend', event.target.value)} placeholder="Hosting/API/database budget" />
+              </label>
+              <label>
+                <span>Max finished-product budget</span>
+                <input value={form.maxBudget} onChange={(event) => updateForm('maxBudget', event.target.value)} placeholder="Highest one-time build budget" />
               </label>
             </div>
 
@@ -178,8 +198,19 @@ const BuildStudio = () => {
                 value={form.description}
                 onChange={(event) => updateForm('description', event.target.value)}
                 required
-                rows={6}
-                placeholder="Describe the product, workflow, audience, or messy idea."
+                rows={4}
+                placeholder="Describe the product, audience, workflow, or messy idea."
+              />
+            </label>
+
+            <label>
+              <span>What features must it support?</span>
+              <textarea
+                value={form.featureScope}
+                onChange={(event) => updateForm('featureScope', event.target.value)}
+                required
+                rows={5}
+                placeholder="List the core screens, user actions, integrations, AI features, admin tools, or data flows."
               />
             </label>
 

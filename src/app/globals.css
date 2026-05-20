@@ -2165,6 +2165,10 @@ body {
   gap: 0.45rem;
 }
 
+.build-studio-form label.is-wide {
+  grid-column: 1 / -1;
+}
+
 .build-studio-form input,
 .build-studio-form select,
 .build-studio-form textarea {
@@ -2299,7 +2303,8 @@ body {
 }
 
 .build-studio-manager-card-head strong,
-.build-studio-manager-card-head a {
+.build-studio-manager-card-head a,
+.build-studio-manager-card-head p {
   display: block;
 }
 
@@ -2309,7 +2314,8 @@ body {
   font-size: 1.3rem;
 }
 
-.build-studio-manager-card-head a {
+.build-studio-manager-card-head a,
+.build-studio-manager-card-head p {
   color: var(--mode-accent);
   margin-top: 0.2rem;
 }

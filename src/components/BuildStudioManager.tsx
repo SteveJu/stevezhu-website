@@ -65,17 +65,21 @@ const BuildStudioManager = () => {
                 <div>
                   <span>{statusLabels[inquiry.status]}</span>
                   <strong>{inquiry.name}</strong>
-                  <a href={`mailto:${inquiry.email}`}>{inquiry.email}</a>
+                  <p>{inquiry.contactMethods}</p>
                 </div>
                 <time>{new Date(inquiry.createdAt).toLocaleString()}</time>
               </div>
               <div className="build-studio-manager-meta">
-                <span>{inquiry.projectType || 'No type'}</span>
-                <span>{inquiry.budgetRange || 'No budget'}</span>
+                <span>{inquiry.productFormat || 'No format'}</span>
+                <span>{inquiry.platforms || 'No platform'}</span>
                 <span>{inquiry.timeline || 'Flexible'}</span>
-                <span>{inquiry.needsDeployment ? 'Deploy' : 'No deploy'}</span>
+                <span>DAU {inquiry.audienceSizeDau || '?'}</span>
+                <span>MAU {inquiry.audienceSizeMau || '?'}</span>
+                <span>Monthly {inquiry.monthlySpend || '?'}</span>
+                <span>Max {inquiry.maxBudget || '?'}</span>
               </div>
               <p>{inquiry.description}</p>
+              <p>{inquiry.featureScope}</p>
               {inquiry.referenceLinks && <pre>{inquiry.referenceLinks}</pre>}
             </article>
           ))}
