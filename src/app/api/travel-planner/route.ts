@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isOwnerUnlocked } from '@/lib/ownerAuth';
+import { requireOwner } from '@/lib/ownerApi';
 import {
   isTravelPlannerPayload,
   loadTravelPlannerState,
@@ -7,12 +7,9 @@ import {
   TravelPlannerConflictError,
 } from '@/lib/travelPlannerState';
 
-const unauthorizedResponse = () => NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-
 export async function GET() {
-  if (!(await isOwnerUnlocked())) {
-    return unauthorizedResponse();
-  }
+  const unauthorizedResponse = await requireOwner();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   try {
     const state = await loadTravelPlannerState();
@@ -30,9 +27,8 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  if (!(await isOwnerUnlocked())) {
-    return unauthorizedResponse();
-  }
+  const unauthorizedResponse = await requireOwner();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   const body = (await request.json().catch(() => null)) as { payload?: unknown; updatedAt?: string | null } | null;
 

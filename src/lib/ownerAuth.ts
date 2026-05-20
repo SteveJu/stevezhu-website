@@ -2,7 +2,8 @@ import { cookies } from 'next/headers';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 export const ownerCookieName = 'stevezhu_owner_mode';
-const ownerSessionMaxAgeMs = 12 * 60 * 60 * 1000;
+export const ownerSessionMaxAgeMs = 12 * 60 * 60 * 1000;
+export const ownerSessionMaxAgeSeconds = ownerSessionMaxAgeMs / 1000;
 
 const signOwnerSession = (timestamp: number, secret: string) => {
   return createHmac('sha256', secret).update(String(timestamp)).digest('hex');

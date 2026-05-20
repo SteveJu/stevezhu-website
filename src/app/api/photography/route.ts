@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isOwnerUnlocked } from '@/lib/ownerAuth';
+import { requireOwner } from '@/lib/ownerApi';
 import {
   isPhotographyPayload,
   loadPhotographyPayload,
@@ -20,9 +20,8 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  if (!(await isOwnerUnlocked())) {
-    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-  }
+  const unauthorizedResponse = await requireOwner();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   const body = (await request.json().catch(() => null)) as { payload?: unknown } | null;
   if (!body || !isPhotographyPayload(body.payload)) {

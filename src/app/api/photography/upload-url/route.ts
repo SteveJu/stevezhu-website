@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isOwnerUnlocked } from '@/lib/ownerAuth';
+import { requireOwner } from '@/lib/ownerApi';
 import { createR2UploadUrl } from '@/lib/r2';
 
 const supportedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -10,9 +10,8 @@ const safeSegment = (value: string) => {
 };
 
 export async function POST(request: Request) {
-  if (!(await isOwnerUnlocked())) {
-    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-  }
+  const unauthorizedResponse = await requireOwner();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   const body = (await request.json().catch(() => null)) as {
     albumSlug?: string;

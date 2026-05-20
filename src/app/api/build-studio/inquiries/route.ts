@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { isOwnerUnlocked } from '@/lib/ownerAuth';
+import { requireOwner } from '@/lib/ownerApi';
 import {
   createBuildStudioInquiry,
   loadBuildStudioInquiries,
@@ -9,9 +9,8 @@ import {
 } from '@/lib/buildStudioInquiries';
 
 export async function GET() {
-  if (!(await isOwnerUnlocked())) {
-    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-  }
+  const unauthorizedResponse = await requireOwner();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   try {
     return NextResponse.json({ inquiries: await loadBuildStudioInquiries() });
@@ -42,9 +41,8 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  if (!(await isOwnerUnlocked())) {
-    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-  }
+  const unauthorizedResponse = await requireOwner();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   const body = (await request.json().catch(() => null)) as { id?: string; update?: unknown } | null;
   const update = parseBuildStudioInquiryUpdate(body?.update);

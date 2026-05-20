@@ -82,7 +82,7 @@ const BuildStudio = () => {
   };
 
   return (
-    <section id="build-studio" data-section="6" className="theme-section build-studio min-h-screen py-20 snap-start">
+    <section id="build-studio" data-section="build-studio" className="theme-section build-studio min-h-screen py-20 snap-start">
       <div className="theme-container">
         <div className="build-studio-header">
           <div>

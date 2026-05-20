@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
-import { isOwnerUnlocked } from '@/lib/ownerAuth';
+import { requireOwner } from '@/lib/ownerApi';
 import { deleteR2Object } from '@/lib/r2';
 
 export async function DELETE(request: Request) {
-  if (!(await isOwnerUnlocked())) {
-    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-  }
+  const unauthorizedResponse = await requireOwner();
+  if (unauthorizedResponse) return unauthorizedResponse;
 
   const body = (await request.json().catch(() => null)) as { storageKey?: string } | null;
   if (!body?.storageKey) {
