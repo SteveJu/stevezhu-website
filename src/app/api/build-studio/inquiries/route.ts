@@ -4,6 +4,8 @@ import {
   createBuildStudioInquiry,
   loadBuildStudioInquiries,
   parseBuildStudioInquiryInput,
+  parseBuildStudioInquiryUpdate,
+  updateBuildStudioInquiry,
 } from '@/lib/buildStudioInquiries';
 
 export async function GET() {
@@ -34,6 +36,33 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to submit inquiry.' },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PATCH(request: Request) {
+  if (!(await isOwnerUnlocked())) {
+    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+  }
+
+  const body = (await request.json().catch(() => null)) as { id?: string; update?: unknown } | null;
+  const update = parseBuildStudioInquiryUpdate(body?.update);
+
+  if (!body?.id || !update) {
+    return NextResponse.json({ error: 'Invalid inquiry update.' }, { status: 400 });
+  }
+
+  try {
+    const inquiry = await updateBuildStudioInquiry(body.id, update);
+    if (!inquiry) {
+      return NextResponse.json({ error: 'Inquiry not found.' }, { status: 404 });
+    }
+
+    return NextResponse.json({ inquiry });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Failed to update inquiry.' },
       { status: 500 },
     );
   }

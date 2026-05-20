@@ -2332,6 +2332,11 @@ body {
   padding: 0.45rem 0.6rem;
 }
 
+.build-studio-manager-copy {
+  display: grid;
+  gap: 0.75rem;
+}
+
 .build-studio-manager-card p {
   color: var(--mode-muted);
   line-height: 1.7;
@@ -2344,6 +2349,65 @@ body {
   color: var(--mode-muted);
   padding: 0.9rem;
   font-size: 0.82rem;
+}
+
+.build-studio-manager-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  border-top: 1px solid var(--mode-line);
+  padding-top: 1rem;
+}
+
+.build-studio-manager-controls label {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.build-studio-manager-controls label.is-wide {
+  grid-column: 1 / -1;
+}
+
+.build-studio-manager-controls label span {
+  color: var(--mode-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.build-studio-manager-controls input,
+.build-studio-manager-controls select,
+.build-studio-manager-controls textarea {
+  width: 100%;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  color: var(--mode-ink);
+  padding: 0.72rem 0.8rem;
+  outline: none;
+}
+
+.build-studio-manager-controls textarea {
+  resize: vertical;
+}
+
+.build-studio-manager-controls input:focus,
+.build-studio-manager-controls select:focus,
+.build-studio-manager-controls textarea:focus {
+  border-color: var(--mode-accent);
+}
+
+.build-studio-manager-controls button {
+  justify-self: start;
+  align-self: end;
+  border: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  color: var(--mode-ink);
+  padding: 0.72rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .theme-pill,
@@ -2789,7 +2853,8 @@ body {
 
   .build-studio-header,
   .build-studio-grid,
-  .build-studio-fields {
+  .build-studio-fields,
+  .build-studio-manager-controls {
     grid-template-columns: 1fr;
   }
 

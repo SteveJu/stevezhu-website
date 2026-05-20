@@ -1,6 +1,7 @@
 import { requestSupabase } from './supabaseAdmin';
 
-export type BuildStudioInquiryStatus = 'new' | 'estimating' | 'accepted' | 'declined' | 'shipped';
+export type BuildStudioInquiryStatus = 'new' | 'reviewing' | 'quoted' | 'negotiating' | 'accepted' | 'building' | 'shipped' | 'archived' | 'declined';
+export type BuildStudioInquiryPriority = 'low' | 'normal' | 'high';
 
 export type BuildStudioInquiry = {
   id: string;
@@ -17,6 +18,11 @@ export type BuildStudioInquiry = {
   maxBudget: string;
   referenceLinks: string;
   status: BuildStudioInquiryStatus;
+  ownerNotes: string;
+  quotedPrice: string;
+  estimatedMonthlyCost: string;
+  estimatedHours: string;
+  priority: BuildStudioInquiryPriority;
   createdAt: string;
 };
 
@@ -38,12 +44,19 @@ type BuildStudioInquiryRow = {
   budget_range?: string;
   reference_links: string;
   status: BuildStudioInquiryStatus;
+  owner_notes?: string;
+  quoted_price?: string;
+  estimated_monthly_cost?: string;
+  estimated_hours?: string;
+  priority?: BuildStudioInquiryPriority;
   created_at: string;
 };
 
-export type BuildStudioInquiryInput = Omit<BuildStudioInquiry, 'id' | 'status' | 'createdAt'>;
+export type BuildStudioInquiryInput = Omit<BuildStudioInquiry, 'id' | 'status' | 'ownerNotes' | 'quotedPrice' | 'estimatedMonthlyCost' | 'estimatedHours' | 'priority' | 'createdAt'>;
+export type BuildStudioInquiryUpdate = Pick<BuildStudioInquiry, 'status' | 'ownerNotes' | 'quotedPrice' | 'estimatedMonthlyCost' | 'estimatedHours' | 'priority'>;
 
-const statuses = new Set<BuildStudioInquiryStatus>(['new', 'estimating', 'accepted', 'declined', 'shipped']);
+const statuses = new Set<BuildStudioInquiryStatus>(['new', 'reviewing', 'quoted', 'negotiating', 'accepted', 'building', 'shipped', 'archived', 'declined']);
+const priorities = new Set<BuildStudioInquiryPriority>(['low', 'normal', 'high']);
 
 const toInquiry = (row: BuildStudioInquiryRow): BuildStudioInquiry => ({
   id: row.id,
@@ -60,6 +73,11 @@ const toInquiry = (row: BuildStudioInquiryRow): BuildStudioInquiry => ({
   maxBudget: row.max_budget || row.budget_range || '',
   referenceLinks: row.reference_links,
   status: statuses.has(row.status) ? row.status : 'new',
+  ownerNotes: row.owner_notes || '',
+  quotedPrice: row.quoted_price || '',
+  estimatedMonthlyCost: row.estimated_monthly_cost || '',
+  estimatedHours: row.estimated_hours || '',
+  priority: row.priority && priorities.has(row.priority) ? row.priority : 'normal',
   createdAt: row.created_at,
 });
 
@@ -90,6 +108,23 @@ export const parseBuildStudioInquiryInput = (value: unknown): BuildStudioInquiry
   if (!inquiry.contactMethods || !inquiry.description || !inquiry.featureScope) return null;
 
   return inquiry;
+};
+
+export const parseBuildStudioInquiryUpdate = (value: unknown): BuildStudioInquiryUpdate | null => {
+  if (!value || typeof value !== 'object') return null;
+
+  const candidate = value as Partial<Record<keyof BuildStudioInquiryUpdate, unknown>>;
+  const status = cleanText(candidate.status, 40) as BuildStudioInquiryStatus;
+  const priority = cleanText(candidate.priority, 40) as BuildStudioInquiryPriority;
+
+  return {
+    status: statuses.has(status) ? status : 'new',
+    priority: priorities.has(priority) ? priority : 'normal',
+    ownerNotes: cleanText(candidate.ownerNotes, 2200),
+    quotedPrice: cleanText(candidate.quotedPrice, 120),
+    estimatedMonthlyCost: cleanText(candidate.estimatedMonthlyCost, 120),
+    estimatedHours: cleanText(candidate.estimatedHours, 80),
+  };
 };
 
 export const loadBuildStudioInquiries = async () => {
@@ -127,4 +162,23 @@ export const createBuildStudioInquiry = async (inquiry: BuildStudioInquiryInput)
   });
 
   return toInquiry(rows[0]);
+};
+
+export const updateBuildStudioInquiry = async (id: string, update: BuildStudioInquiryUpdate) => {
+  const rows = await requestSupabase<BuildStudioInquiryRow[]>(`/build_studio_inquiries?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: {
+      Prefer: 'return=representation',
+    },
+    body: {
+      status: update.status,
+      priority: update.priority,
+      owner_notes: update.ownerNotes,
+      quoted_price: update.quotedPrice,
+      estimated_monthly_cost: update.estimatedMonthlyCost,
+      estimated_hours: update.estimatedHours,
+    },
+  });
+
+  return rows[0] ? toInquiry(rows[0]) : null;
 };
