@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { checkOwnerStatus } from './OwnerAccess';
-import type { BuildStudioInquiry } from '@/lib/buildStudioInquiries';
 
 type FormState = {
   name: string;
@@ -28,48 +27,14 @@ const emptyForm: FormState = {
 
 const ownerModeEvent = 'owner-mode-change';
 
-const statusLabels: Record<BuildStudioInquiry['status'], string> = {
-  new: 'New',
-  estimating: 'Estimating',
-  accepted: 'Accepted',
-  declined: 'Declined',
-  shipped: 'Shipped',
-};
-
 const BuildStudio = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
-  const [inquiries, setInquiries] = useState<BuildStudioInquiry[]>([]);
-  const [loadStatus, setLoadStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'submitted' | 'error'>('idle');
-
-  const loadInquiries = async () => {
-    setLoadStatus('loading');
-
-    try {
-      const response = await fetch('/api/build-studio/inquiries', {
-        cache: 'no-store',
-        credentials: 'same-origin',
-      });
-
-      if (!response.ok) throw new Error('Failed to load inquiries.');
-
-      const result = (await response.json()) as { inquiries?: BuildStudioInquiry[] };
-      setInquiries(result.inquiries ?? []);
-      setLoadStatus('ready');
-    } catch {
-      setLoadStatus('error');
-    }
-  };
 
   useEffect(() => {
     const refreshOwnerStatus = () => {
-      void checkOwnerStatus().then((unlocked) => {
-        setIsOwner(unlocked);
-        if (unlocked) {
-          void loadInquiries();
-        }
-      });
+      void checkOwnerStatus().then(setIsOwner);
     };
 
     refreshOwnerStatus();
@@ -101,10 +66,6 @@ const BuildStudio = () => {
 
       if (!response.ok) throw new Error('Failed to submit inquiry.');
 
-      const result = (await response.json()) as { inquiry?: BuildStudioInquiry };
-      if (result.inquiry) {
-        setInquiries((current) => [result.inquiry as BuildStudioInquiry, ...current]);
-      }
       setForm(emptyForm);
       setSubmitStatus('submitted');
     } catch {
@@ -121,11 +82,40 @@ const BuildStudio = () => {
             <h2 className="theme-heading">Build Studio</h2>
           </div>
           <p className="theme-copy">
-            Fast product prototypes, polished enough to test with real users. This section is hidden until owner mode is unlocked.
+            Fast product prototypes, polished enough to test with real users. This section is hidden for now while the studio offer is being shaped.
           </p>
         </div>
 
         <div className="build-studio-grid">
+          <div className="theme-card build-studio-showcase">
+            <div className="build-studio-form-heading">
+              <span>Vibe coding menu</span>
+              <strong>What I can build fast</strong>
+            </div>
+            <div className="build-studio-showcase-grid">
+              <article>
+                <span>01</span>
+                <strong>Product prototypes</strong>
+                <p>Clickable, deployed MVP-style experiences for testing an idea with real users.</p>
+              </article>
+              <article>
+                <span>02</span>
+                <strong>Internal tools</strong>
+                <p>Dashboards, planners, intake systems, admin panels, and workflow helpers.</p>
+              </article>
+              <article>
+                <span>03</span>
+                <strong>AI workflows</strong>
+                <p>Screenshot reading, structured extraction, automations, and lightweight agent flows.</p>
+              </article>
+              <article>
+                <span>04</span>
+                <strong>Polished web pages</strong>
+                <p>Personal sites, launch pages, portfolios, and interactive product demos.</p>
+              </article>
+            </div>
+          </div>
+
           <form className="theme-card build-studio-form" onSubmit={submitInquiry}>
             <div className="build-studio-form-heading">
               <span>Inquiry Intake</span>
@@ -209,34 +199,6 @@ const BuildStudio = () => {
             {submitStatus === 'submitted' && <p className="build-studio-status">Inquiry saved.</p>}
             {submitStatus === 'error' && <p className="build-studio-status is-error">Could not save inquiry.</p>}
           </form>
-
-          <aside className="theme-card build-studio-inquiries">
-            <div className="build-studio-form-heading">
-              <span>Pipeline</span>
-              <strong>{inquiries.length} inquiries</strong>
-            </div>
-
-            {loadStatus === 'loading' && <p className="theme-copy">Loading inquiries.</p>}
-            {loadStatus === 'error' && <p className="build-studio-status is-error">Run the Build Studio Supabase SQL before using this section.</p>}
-            {loadStatus === 'ready' && inquiries.length === 0 && (
-              <p className="theme-copy">No inquiries yet. Use the form to test the intake flow.</p>
-            )}
-            {inquiries.length > 0 && (
-              <div className="build-studio-list">
-                {inquiries.map((inquiry) => (
-                  <article key={inquiry.id}>
-                    <div>
-                      <span>{statusLabels[inquiry.status]}</span>
-                      <time>{new Date(inquiry.createdAt).toLocaleDateString()}</time>
-                    </div>
-                    <strong>{inquiry.name}</strong>
-                    <a href={`mailto:${inquiry.email}`}>{inquiry.email}</a>
-                    <p>{inquiry.description}</p>
-                  </article>
-                ))}
-              </div>
-            )}
-          </aside>
         </div>
       </div>
     </section>

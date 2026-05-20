@@ -22,10 +22,6 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  if (!(await isOwnerUnlocked())) {
-    return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-  }
-
   const body = (await request.json().catch(() => null)) as { inquiry?: unknown } | null;
   const inquiry = parseBuildStudioInquiryInput(body?.inquiry);
 

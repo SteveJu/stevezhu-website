@@ -2068,11 +2068,12 @@ body {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.56fr);
+  grid-template-columns: minmax(0, 0.86fr) minmax(20rem, 0.7fr);
   gap: clamp(1rem, 2.6vw, 2rem);
   align-items: start;
 }
 
+.build-studio-showcase,
 .build-studio-form,
 .build-studio-inquiries {
   padding: clamp(1.2rem, 3vw, 2rem);
@@ -2106,6 +2107,41 @@ body {
 .build-studio-form-heading strong {
   color: var(--mode-ink);
   font-size: 1.15rem;
+}
+
+.build-studio-showcase-grid {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.build-studio-showcase-grid article {
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 78%, transparent);
+  padding: 1rem;
+}
+
+.build-studio-showcase-grid span,
+.build-studio-manager-card-head span,
+.build-studio-manager-card-head time,
+.build-studio-manager-meta span {
+  color: var(--mode-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.build-studio-showcase-grid strong {
+  display: block;
+  color: var(--mode-ink);
+  margin-top: 0.45rem;
+  font-size: 1.08rem;
+}
+
+.build-studio-showcase-grid p {
+  color: var(--mode-muted);
+  margin-top: 0.55rem;
+  line-height: 1.65;
 }
 
 .build-studio-fields {
@@ -2226,6 +2262,72 @@ body {
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
+}
+
+.build-studio-manager {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1rem;
+}
+
+.build-studio-manager-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.build-studio-manager-card {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1.2rem, 3vw, 1.6rem);
+}
+
+.build-studio-manager-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.build-studio-manager-card-head strong,
+.build-studio-manager-card-head a {
+  display: block;
+}
+
+.build-studio-manager-card-head strong {
+  color: var(--mode-ink);
+  margin-top: 0.35rem;
+  font-size: 1.3rem;
+}
+
+.build-studio-manager-card-head a {
+  color: var(--mode-accent);
+  margin-top: 0.2rem;
+}
+
+.build-studio-manager-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.build-studio-manager-meta span {
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 78%, transparent);
+  padding: 0.45rem 0.6rem;
+}
+
+.build-studio-manager-card p {
+  color: var(--mode-muted);
+  line-height: 1.7;
+}
+
+.build-studio-manager-card pre {
+  white-space: pre-wrap;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  color: var(--mode-muted);
+  padding: 0.9rem;
+  font-size: 0.82rem;
 }
 
 .theme-pill,
@@ -2673,6 +2775,10 @@ body {
   .build-studio-grid,
   .build-studio-fields {
     grid-template-columns: 1fr;
+  }
+
+  .build-studio-manager-card-head {
+    flex-direction: column;
   }
 
   .photo-album-hero {

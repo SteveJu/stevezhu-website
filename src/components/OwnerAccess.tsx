@@ -86,6 +86,7 @@ const OwnerAccess = () => {
                 <p className="theme-owner-title">私人工作台</p>
               </div>
               <div className="theme-owner-links">
+                <Link href="/owner/build-studio">Build Studio</Link>
                 <Link href="/owner/stock-dashboard">Stock Dashboard</Link>
                 <Link href="/owner/travel-planner">Travel Planner</Link>
                 <Link href="/owner/photography">Photography Manager</Link>
