@@ -15,6 +15,7 @@ const Particles = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const animationRef = useRef<number | undefined>(undefined);
+  const isVisibleRef = useRef(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -48,9 +49,16 @@ const Particles = () => {
       }
     };
 
-    const animate = () => {
-      if (document.hidden) {
+    const startAnimation = () => {
+      if (animationRef.current === undefined && !document.hidden && isVisibleRef.current) {
         animationRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    const animate = () => {
+      animationRef.current = undefined;
+
+      if (document.hidden || !isVisibleRef.current) {
         return;
       }
 
@@ -73,7 +81,7 @@ const Particles = () => {
         ctx.fill();
       });
 
-      animationRef.current = requestAnimationFrame(animate);
+      startAnimation();
     };
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -83,20 +91,36 @@ const Particles = () => {
 
     resizeCanvas();
     createParticles();
-    animate();
+    startAnimation();
 
     const handleResize = () => {
       resizeCanvas();
       createParticles();
     };
 
+    const handleVisibilityChange = () => {
+      startAnimation();
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = Boolean(entry?.isIntersecting);
+        startAnimation();
+      },
+      { threshold: 0 },
+    );
+
+    observer.observe(canvas);
     window.addEventListener('resize', handleResize);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      observer.disconnect();
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
