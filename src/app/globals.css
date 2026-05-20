@@ -2054,6 +2054,180 @@ body {
   font-size: 1.55rem;
 }
 
+.build-studio-header {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 0.65fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: end;
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.build-studio-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.56fr);
+  gap: clamp(1rem, 2.6vw, 2rem);
+  align-items: start;
+}
+
+.build-studio-form,
+.build-studio-inquiries {
+  padding: clamp(1.2rem, 3vw, 2rem);
+}
+
+.build-studio-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.build-studio-form-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.35rem;
+}
+
+.build-studio-form-heading span,
+.build-studio-form label span,
+.build-studio-list article span,
+.build-studio-list article time {
+  color: var(--mode-muted);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.build-studio-form-heading strong {
+  color: var(--mode-ink);
+  font-size: 1.15rem;
+}
+
+.build-studio-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.build-studio-form label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.build-studio-form input,
+.build-studio-form select,
+.build-studio-form textarea {
+  width: 100%;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  color: var(--mode-ink);
+  padding: 0.82rem 0.9rem;
+  outline: none;
+}
+
+.build-studio-form textarea {
+  resize: vertical;
+}
+
+.build-studio-form input:focus,
+.build-studio-form select:focus,
+.build-studio-form textarea:focus {
+  border-color: var(--mode-accent);
+}
+
+.build-studio-check {
+  display: flex !important;
+  min-height: 2.95rem;
+  align-items: center;
+  gap: 0.7rem !important;
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 82%, transparent);
+  padding: 0.82rem 0.9rem;
+}
+
+.build-studio-check input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--mode-accent);
+}
+
+.build-studio-form button {
+  justify-self: start;
+  border: 1px solid var(--mode-line);
+  background: var(--mode-surface-strong);
+  color: var(--mode-ink);
+  padding: 0.82rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.build-studio-form button:hover {
+  border-color: var(--mode-accent);
+  color: var(--mode-accent);
+  transform: translateY(-1px);
+}
+
+.build-studio-status {
+  color: var(--mode-accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.build-studio-status.is-error {
+  color: var(--mode-accent-2);
+}
+
+.build-studio-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.build-studio-list article {
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-bg) 78%, transparent);
+  padding: 1rem;
+}
+
+.build-studio-list article div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.build-studio-list article strong,
+.build-studio-list article a {
+  display: block;
+}
+
+.build-studio-list article strong {
+  color: var(--mode-ink);
+  font-size: 1.05rem;
+}
+
+.build-studio-list article a {
+  color: var(--mode-accent);
+  margin-top: 0.2rem;
+  font-size: 0.86rem;
+}
+
+.build-studio-list article p {
+  color: var(--mode-muted);
+  display: -webkit-box;
+  margin-top: 0.75rem;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
 .theme-pill,
 .theme-tech,
 .theme-button {
@@ -2493,6 +2667,12 @@ body {
 
   .theme-title {
     font-size: clamp(3.1rem, 18vw, 5.5rem);
+  }
+
+  .build-studio-header,
+  .build-studio-grid,
+  .build-studio-fields {
+    grid-template-columns: 1fr;
   }
 
   .photo-album-hero {
