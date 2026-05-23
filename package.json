@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "secret-scan": "node scripts/secret-scan.mjs"
   },
   "dependencies": {
     "chart.js": "^4.5.1",
