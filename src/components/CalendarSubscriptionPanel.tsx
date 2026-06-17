@@ -37,7 +37,6 @@ const CalendarSubscriptionPanel = () => {
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>('idle');
   const origin = useSyncExternalStore(subscribeToOrigin, getClientOrigin, getServerOrigin);
   const feedUrl = origin ? new URL(calendarFeedPath, origin).toString() : calendarFeedPath;
-  const webcalUrl = feedUrl.startsWith('http') ? feedUrl.replace(/^https?:/, 'webcal:') : '';
 
   const copyFeedUrl = async () => {
     try {
@@ -53,24 +52,16 @@ const CalendarSubscriptionPanel = () => {
   return (
     <div className="theme-card calendar-subscription-card">
       <div>
-        <p className="theme-kicker mb-4">Live ICS Feed</p>
-        <h2 className="theme-card-title">Subscription URL</h2>
+        <p className="theme-kicker mb-4">ICS Feed</p>
+        <h2 className="theme-card-title">Calendar Link</h2>
       </div>
 
       <code className="calendar-feed-url">{feedUrl}</code>
 
       <div className="calendar-actions">
         <button type="button" className="theme-button" onClick={copyFeedUrl}>
-          {copyState === 'copied' ? 'Copied' : copyState === 'failed' ? 'Copy Failed' : 'Copy URL'}
+          {copyState === 'copied' ? 'Copied' : copyState === 'failed' ? 'Copy Failed' : 'Copy ICS Link'}
         </button>
-        <a href={calendarFeedPath} className="theme-button">
-          Download ICS
-        </a>
-        {webcalUrl && (
-          <a href={webcalUrl} className="theme-button">
-            Open Webcal
-          </a>
-        )}
       </div>
     </div>
   );
