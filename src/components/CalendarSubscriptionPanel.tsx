@@ -2,7 +2,7 @@
 
 import { useState, useSyncExternalStore } from 'react';
 
-const calendarFeedPath = '/api/world-cup-calendar';
+const calendarFeedPath = '/world-cup-2026.ics';
 const subscribeToOrigin = () => () => {};
 const getClientOrigin = () => window.location.origin;
 const getServerOrigin = () => '';
