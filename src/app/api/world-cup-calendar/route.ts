@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { buildWorldCupCalendar } from '@/lib/worldCupCalendar';
+import { getWorldCupCalendar } from '@/lib/worldCupCalendar';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -20,7 +20,7 @@ export async function HEAD() {
 
 export async function GET() {
   try {
-    return new NextResponse(await buildWorldCupCalendar(), {
+    return new NextResponse(await getWorldCupCalendar(), {
       headers: calendarHeaders,
     });
   } catch (error) {
