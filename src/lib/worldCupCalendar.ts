@@ -5,7 +5,12 @@ const DEFAULT_DATES = '20260611-20260719';
 const DEFAULT_LIMIT = 200;
 const DEFAULT_CALENDAR_NAME = 'FIFA World Cup 2026';
 const DEFAULT_TIMEZONE = 'America/New_York';
-const DEFAULT_REFRESH_SECONDS = 300;
+const CLIENT_REFRESH_SECONDS = 60;
+const ACTIVE_REFRESH_SECONDS = 60;
+const IDLE_REFRESH_SECONDS = 6 * 60 * 60;
+const ACTIVE_WINDOW_BEFORE_MS = 15 * 60 * 1000;
+const ACTIVE_WINDOW_AFTER_MS = 45 * 60 * 1000;
+const STOP_REFRESH_AFTER = new Date('2026-07-21T04:00:00Z');
 const PRODUCT_ID = '-//Steve Zhu//FIFA World Cup 2026 Calendar//EN';
 
 type EspnLink = {
@@ -65,7 +70,13 @@ type EspnScoreboard = {
   events?: EspnEvent[];
 };
 
+type CalendarCache = {
+  content: string;
+  refreshAt: number;
+};
+
 const textEncoder = new TextEncoder();
+let calendarCache: CalendarCache | null = null;
 
 const utcNow = () => new Date();
 
@@ -157,6 +168,8 @@ const addMinutes = (date: Date, minutes: number) => new Date(date.getTime() + mi
 const eventDurationMinutes = (event: EspnEvent) =>
   event.season?.slug === 'group-stage' ? 135 : 180;
 
+const eventState = (event: EspnEvent) => getCompetition(event)?.status?.type?.state ?? '';
+
 const venueText = (competition: EspnCompetition | undefined) => {
   const venue = competition?.venue;
   const pieces = [venue?.fullName, venue?.address?.city, venue?.address?.country];
@@ -205,7 +218,7 @@ const descriptionForEvent = (event: EspnEvent, generatedAt: Date) => {
 };
 
 const calendarHeader = () => {
-  const refresh = `PT${DEFAULT_REFRESH_SECONDS}S`;
+  const refresh = `PT${CLIENT_REFRESH_SECONDS}S`;
 
   return [
     'BEGIN:VCALENDAR',
@@ -234,7 +247,7 @@ const eventLines = (event: EspnEvent, generatedAt: Date) => {
     makeRawLine('UID', `fifa-world-cup-2026-${eventId}@stevezhu.com`),
     makeRawLine('DTSTAMP', formatIcsDate(generatedAt)),
     makeRawLine('LAST-MODIFIED', formatIcsDate(generatedAt)),
-    makeRawLine('SEQUENCE', Math.floor(generatedAt.getTime() / 1000 / DEFAULT_REFRESH_SECONDS)),
+    makeRawLine('SEQUENCE', Math.floor(generatedAt.getTime() / 1000 / CLIENT_REFRESH_SECONDS)),
     makeRawLine('DTSTART', formatIcsDate(start)),
     makeRawLine('DTEND', formatIcsDate(end)),
     makeLine('SUMMARY', titleForEvent(event)),
@@ -266,6 +279,44 @@ const buildIcs = (scoreboard: EspnScoreboard) => {
   return `${lines.join('\r\n')}\r\n`;
 };
 
+const secondsUntil = (time: number, now: number) => Math.max(ACTIVE_REFRESH_SECONDS, Math.ceil((time - now) / 1000));
+
+const refreshSecondsForScoreboard = (scoreboard: EspnScoreboard, now = Date.now()) => {
+  if (now >= STOP_REFRESH_AFTER.getTime()) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  let nextStart: number | null = null;
+
+  for (const event of scoreboard.events ?? []) {
+    if (!event.date || !getCompetition(event)) continue;
+
+    const start = parseEspnDate(event.date).getTime();
+    if (Number.isNaN(start)) continue;
+
+    const state = eventState(event);
+    const end = addMinutes(new Date(start), eventDurationMinutes(event)).getTime();
+
+    if (state === 'in') {
+      return ACTIVE_REFRESH_SECONDS;
+    }
+
+    if (state !== 'post' && start - ACTIVE_WINDOW_BEFORE_MS <= now && now <= end + ACTIVE_WINDOW_AFTER_MS) {
+      return ACTIVE_REFRESH_SECONDS;
+    }
+
+    if (state === 'pre' && start > now && (nextStart === null || start < nextStart)) {
+      nextStart = start;
+    }
+  }
+
+  if (nextStart) {
+    return Math.min(IDLE_REFRESH_SECONDS, secondsUntil(nextStart, now));
+  }
+
+  return IDLE_REFRESH_SECONDS;
+};
+
 const fetchScoreboard = async () => {
   const params = new URLSearchParams({
     dates: DEFAULT_DATES,
@@ -287,3 +338,29 @@ const fetchScoreboard = async () => {
 };
 
 export const buildWorldCupCalendar = async () => buildIcs(await fetchScoreboard());
+
+export const getWorldCupCalendar = async () => {
+  const now = Date.now();
+
+  if (calendarCache && now < calendarCache.refreshAt) {
+    return calendarCache.content;
+  }
+
+  try {
+    const scoreboard = await fetchScoreboard();
+    const content = buildIcs(scoreboard);
+    const refreshSeconds = refreshSecondsForScoreboard(scoreboard, now);
+    calendarCache = {
+      content,
+      refreshAt: Number.isFinite(refreshSeconds) ? now + refreshSeconds * 1000 : Number.MAX_SAFE_INTEGER,
+    };
+
+    return content;
+  } catch (error) {
+    if (calendarCache) {
+      return calendarCache.content;
+    }
+
+    throw error;
+  }
+};
