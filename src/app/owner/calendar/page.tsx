@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import CalendarSubscriptionPanel from '@/components/CalendarSubscriptionPanel';
+import CalendarUsageStats from '@/components/CalendarUsageStats';
 import OwnerHomeLink from '@/components/OwnerHomeLink';
 import OwnerPageGate from '@/components/OwnerPageGate';
 import SiteModeFrame from '@/components/SiteModeFrame';
@@ -21,6 +22,7 @@ const CalendarOwnerPage = () => {
 
             <div className="calendar-owner-grid">
               <CalendarSubscriptionPanel />
+              <CalendarUsageStats />
             </div>
           </div>
         </section>

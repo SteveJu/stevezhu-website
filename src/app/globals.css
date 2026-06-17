@@ -855,12 +855,13 @@ body {
 
 .calendar-owner-grid {
   display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.7fr);
   gap: 1rem;
   margin-top: 2rem;
-  max-width: 48rem;
 }
 
-.calendar-subscription-card {
+.calendar-subscription-card,
+.calendar-usage-card {
   padding: clamp(1.25rem, 3vw, 2rem);
 }
 
@@ -895,6 +896,53 @@ body {
 }
 
 .site-frame[data-site-mode="sketch"] .calendar-feed-url {
+  border: 1.6px solid var(--mode-ink);
+  border-radius: 22px 16px 26px 18px / 16px 26px 18px 22px;
+  background: transparent;
+}
+
+.calendar-usage-card {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.calendar-usage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.calendar-usage-grid div {
+  border: 1px solid var(--mode-line);
+  background: color-mix(in srgb, var(--mode-surface) 82%, transparent);
+  padding: 0.95rem;
+}
+
+.calendar-usage-grid span {
+  display: block;
+  color: var(--mode-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.calendar-usage-grid strong {
+  display: block;
+  margin-top: 0.45rem;
+  color: var(--mode-accent);
+  font-family: var(--mode-font-display);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.calendar-usage-message {
+  color: var(--mode-muted);
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.site-frame[data-site-mode="sketch"] .calendar-usage-grid div {
   border: 1.6px solid var(--mode-ink);
   border-radius: 22px 16px 26px 18px / 16px 26px 18px 22px;
   background: transparent;

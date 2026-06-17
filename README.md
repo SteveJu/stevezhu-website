@@ -9,6 +9,7 @@ The owner area includes:
 - AI screenshot filling for travel items through Gemini
 - Photography manager with Supabase metadata and Cloudflare R2 image storage
 - Stock dashboard placeholder
+- World Cup calendar feed with anonymous usage estimates
 
 ## Local Development
 
@@ -34,6 +35,7 @@ Create `.env.local` locally. Do not commit it.
 
 ```bash
 OWNER_PASSCODE=
+CALENDAR_ANALYTICS_SALT=
 SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
 GEMINI_API_KEY=
@@ -56,6 +58,7 @@ Initialize the tables with:
 ```bash
 supabase/travel_planner_state.sql
 supabase/photography_state.sql
+supabase/world_cup_calendar_usage.sql
 ```
 
 The API uses the service role key server-side only. Never expose `SUPABASE_SERVICE_ROLE_KEY` to client code.

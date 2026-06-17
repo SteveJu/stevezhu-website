@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getWorldCupCalendar } from '@/lib/worldCupCalendar';
+import { recordWorldCupCalendarUsage } from '@/lib/worldCupCalendarUsage';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -18,9 +19,14 @@ export async function HEAD() {
   return new NextResponse(null, { headers: calendarHeaders });
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    return new NextResponse(await getWorldCupCalendar(), {
+    const [calendar] = await Promise.all([
+      getWorldCupCalendar(),
+      recordWorldCupCalendarUsage(request),
+    ]);
+
+    return new NextResponse(calendar, {
       headers: calendarHeaders,
     });
   } catch (error) {
