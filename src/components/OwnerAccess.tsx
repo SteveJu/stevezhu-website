@@ -110,6 +110,7 @@ const OwnerAccess = () => {
                 <Link href="/owner/build-studio">Build Studio</Link>
                 <Link href="/owner/stock-dashboard">Stock Dashboard</Link>
                 <Link href="/owner/travel-planner">Travel Planner</Link>
+                <Link href="/owner/calendar">Calendar</Link>
                 <Link href="/owner/photography">Photography Manager</Link>
               </div>
               <button type="button" className="theme-owner-exit" onClick={exitOwner}>
