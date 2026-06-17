@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server';
-import { requireOwner } from '@/lib/ownerApi';
+import { isOwnerUnlocked } from '@/lib/ownerAuth';
 import { loadWorldCupCalendarUsageStats } from '@/lib/worldCupCalendarUsage';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const runtime = 'nodejs';
 
+const unauthorizedResponse = () => NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
+
 export async function GET() {
-  const unauthorizedResponse = await requireOwner();
-  if (unauthorizedResponse) return unauthorizedResponse;
+  if (!(await isOwnerUnlocked())) {
+    return unauthorizedResponse();
+  }
 
   try {
     return NextResponse.json({ stats: await loadWorldCupCalendarUsageStats() });
